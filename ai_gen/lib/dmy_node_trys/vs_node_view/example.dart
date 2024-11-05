@@ -55,7 +55,7 @@ class _VSNodeExampleState extends State<VSNodeExample> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             backgroundColor: Colors.deepOrange,
-                            content: Text('An error occured'),
+                            content: Text('An error occured '),
                           ),
                         );
                       }),
