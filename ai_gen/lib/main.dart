@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'block_view/example.dart';
 
 void main() async {
-  print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
+  // print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());
 }
 

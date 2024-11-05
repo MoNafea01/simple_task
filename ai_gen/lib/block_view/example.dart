@@ -61,6 +61,7 @@ class _VSNodeExampleState extends State<VSNodeExample> {
                         ),
                       )
                       .toList();
+                  print(entries);
 
                   for (var i = 0; i < entries.length; i++) {
                     var x = await entries[i].value;
