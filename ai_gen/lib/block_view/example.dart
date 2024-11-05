@@ -1,5 +1,5 @@
+import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
-import 'package:vs_node_view/vs_node_view.dart';
 
 import 'helper/constants.dart';
 import 'helper/legend.dart';
