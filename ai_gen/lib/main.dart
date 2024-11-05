@@ -1,7 +1,10 @@
 import 'package:ai_gen/sonnet_code.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'dmy_node_trys/vs_node_view/example.dart';
+
+void main() async {
+  print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());
 }
 
@@ -16,8 +19,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Test Demo',
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 46, 46, 46),
+      ),
+      home: const VSNodeExample(),
     );
   }
 }
