@@ -54,6 +54,27 @@ class NodeEditorController with ChangeNotifier {
     return _viewportOffset;
   }
 
+  void passData(
+      String fromNode, String fromPort, String toNode, String toPort) {
+    final outPort = getOutPort(fromNode, fromPort);
+    final inPort = getInPort(toNode, toPort);
+
+    if (outPort != null && inPort != null) {
+      final data = outPort.requestData();
+      if (data != null) {
+        inPort.receiveData(data);
+      }
+    }
+  }
+
+  OutPortWidget? getOutPort(String nodeName, String portName) {
+    // Implement logic to retrieve the OutPortWidget by node and port name
+  }
+
+  InPortWidget? getInPort(String nodeName, String portName) {
+    // Implement logic to retrieve the InPortWidget by node and port name
+  }
+
   /// Focus node that request a focus when some node is tap or moved
   /// this attribute must be initialized in the init of the main widget
   /// node editor
@@ -132,6 +153,19 @@ class NodeEditorController with ChangeNotifier {
   void addConnectionByTap({required String inNode, required String inPort}) {
     connectionsManager.addConnectionByTap(nodesManager.nodes,
         inPort: inPort, inNode: inNode);
+
+    ///copilot
+    if (outNodeName != null && outPortName != null) {
+      // Trigger data transfer
+      var outPortWidget = getOutPort(outNodeName!, outPortName!);
+      var inPortWidget = getInPort(inNode, inPort);
+      if (outPortWidget != null && inPortWidget != null) {
+        var data = outPortWidget.requestData();
+        if (data != null) {
+          inPortWidget.receiveData(data);
+        }
+      }
+    }
     notifyListeners();
   }
 

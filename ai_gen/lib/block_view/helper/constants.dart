@@ -1,8 +1,8 @@
 import 'package:ai_gen/helper/helper.dart';
 import 'package:ai_gen/sonnet_code.dart';
+import 'package:ai_gen/vs_node_view/data/standard_interfaces/vs_list_interface.dart';
+import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
-import 'package:vs_node_view/data/standard_interfaces/vs_int_interface.dart';
-import 'package:vs_node_view/vs_node_view.dart';
 
 class VSHelper {
   static List<Object> nodeBuilders = [
@@ -136,7 +136,7 @@ class VSHelper {
         widgetOffset: offset,
         outputData: VSListOutputData(
           type: "Output",
-          outputFunction: (data) async => Helper.parseList(controller.text),
+          outputFunction: (data) => Helper.parseList(controller.text),
         ),
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
@@ -148,47 +148,6 @@ class VSHelper {
           widgetOffset: offset,
           ref: ref,
         ),
-    (Offset offset, VSOutputData<dynamic>? ref) {
-      print(ref?.nodeData?.inputData.toList());
-
-      return VSNodeData(
-        type: "train Test Split",
-        widgetOffset: offset,
-        inputData: [
-          VSListInputData(
-            type: "data",
-            initialConnection: ref,
-          ),
-          VSDoubleInputData(
-            type: "test_size",
-            initialConnection: ref,
-          ),
-          VSDoubleInputData(
-            type: "random_state",
-            initialConnection: ref,
-          ),
-        ],
-        outputData: [
-          VSListOutputData(
-            type: "X_train",
-            outputFunction: (data) {
-              // Explicitly type the List as List<double>
-              return trainTestSplit(data["data"])
-                  .then<List<double>>((result) => result['X_train'] ?? [])
-                  .catchError((error) => []); // Explicitly return List<double>
-            },
-          ),
-          VSListOutputData(
-            type: "X_test",
-            outputFunction: (data) {
-              return trainTestSplit(data["data"])
-                  .then<List<double>>((result) => result['X_test'] ?? [])
-                  .catchError((error) => []); // Explicitly return List<double>
-            },
-          ),
-        ],
-      );
-    },
     (Offset offset, VSOutputData? ref) {
       final controller = TextEditingController();
       final input = TextField(
@@ -209,6 +168,77 @@ class VSHelper {
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
         getValue: () => controller.text,
+      );
+    },
+    (Offset offset, VSOutputData? ref) {
+      final controller = TextEditingController();
+      final input = TextField(
+        controller: controller,
+        decoration: const InputDecoration(
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+        ),
+      );
+
+      return VSWidgetNode(
+        type: "int input",
+        widgetOffset: offset,
+        outputData: VSIntOutputData(
+          type: "Output",
+          outputFunction: (data) => int.parse(controller.text),
+        ),
+        child: Expanded(child: input),
+        setValue: (value) => controller.text = value,
+        getValue: () => controller.text,
+      );
+    },
+    (Offset offset, VSOutputData<dynamic>? ref) {
+      Future<Map<String, List<dynamic>>>? splitDataFuture;
+      return VSNodeData(
+        type: "train Test Split",
+        widgetOffset: offset,
+        inputData: [
+          VSListInputData(
+            type: "data",
+            initialConnection: ref,
+          ),
+          VSDoubleInputData(
+            type: "test_size",
+            initialConnection: ref,
+          ),
+          VSIntInputData(
+            type: "random_state",
+            initialConnection: ref,
+          ),
+        ],
+        outputData: [
+          VSListOutputData(
+            type: "X_train",
+            outputFunction: (data) async {
+              data["data"] = await data["data"];
+              splitDataFuture = trainTestSplit(
+                data["data"],
+                testSize: data["test_size"] ?? 0.5,
+                randomState: data["random_state"] ?? 2,
+              );
+              Map<String, List<dynamic>> splitData = await splitDataFuture!;
+
+              // Step 4: Cast the list to List<double> if possible.
+              return List<double>.from(splitData['X_train']!);
+            },
+          ),
+          VSListOutputData(
+            type: "X_test",
+            outputFunction: (data) async {
+              data["data"] = await data["data"];
+              splitDataFuture ??= trainTestSplit(data["data"]);
+              Map<String, List<dynamic>> splitData = await splitDataFuture!;
+
+              // Cast the list to List<double> if possible.
+              return List<double>.from(splitData['X_test']!);
+            },
+          ),
+        ],
       );
     },
   ];

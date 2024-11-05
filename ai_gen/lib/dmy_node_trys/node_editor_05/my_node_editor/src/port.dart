@@ -1,3 +1,4 @@
+import 'package:ai_gen/dmy_node_trys/node_editor_05/class/node_data.dart';
 import 'package:flutter/material.dart';
 
 import 'connections.dart';
@@ -10,16 +11,20 @@ abstract class PropertyWidgetInterface extends NodeItemWidgetInterface
     implements Widget {}
 
 class InPortWidget extends StatefulWidget {
-  const InPortWidget(
-      {Key? key,
-      required this.multiConnections,
-      this.maxConnections,
-      required this.name,
-      required this.icon,
-      this.connectionTheme,
-      this.onConnect,
-      this.iconConnected})
-      : super(key: key);
+  ///copilot
+  final void Function(NodeData)? onDataReceived;
+
+  const InPortWidget({
+    super.key,
+    required this.multiConnections,
+    this.maxConnections,
+    required this.name,
+    required this.icon,
+    this.connectionTheme,
+    this.onConnect,
+    this.iconConnected,
+    this.onDataReceived,
+  });
 
   final bool multiConnections;
   final int? maxConnections;
@@ -31,11 +36,17 @@ class InPortWidget extends StatefulWidget {
 
   @override
   State<InPortWidget> createState() => _InPortWidgetState();
+  void receiveData(NodeData data) {
+    if (onDataReceived != null) {
+      onDataReceived!(data);
+    }
+  }
 }
 
 class _InPortWidgetState extends State<InPortWidget> {
   final GlobalKey globalKey = GlobalKey();
   late final InPort inPortInfo;
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -91,15 +102,19 @@ class _InPortWidgetState extends State<InPortWidget> {
 }
 
 class OutPortWidget extends StatefulWidget {
-  const OutPortWidget(
-      {Key? key,
-      required this.multiConnections,
-      this.maxConnections,
-      required this.name,
-      required this.icon,
-      this.connectionTheme,
-      this.iconConnected})
-      : super(key: key);
+  ///copilot
+  final NodeData Function()? onDataRequest;
+
+  const OutPortWidget({
+    super.key,
+    required this.multiConnections,
+    this.maxConnections,
+    required this.name,
+    required this.icon,
+    this.connectionTheme,
+    this.iconConnected,
+    this.onDataRequest,
+  });
 
   final bool multiConnections;
   final int? maxConnections;
@@ -110,6 +125,12 @@ class OutPortWidget extends StatefulWidget {
 
   @override
   State<OutPortWidget> createState() => _OutPortWidgetState();
+  NodeData? requestData() {
+    if (onDataRequest != null) {
+      return onDataRequest!();
+    }
+    return null;
+  }
 }
 
 class _OutPortWidgetState extends State<OutPortWidget> {

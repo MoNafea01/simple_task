@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'my_node_red/node_editor.dart';
+import 'my_node_editor/node_editor.dart';
 
 class MyNodeGrid extends StatelessWidget {
   const MyNodeGrid({

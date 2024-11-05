@@ -1,8 +1,7 @@
-import 'package:ai_gen/dmy_node_trys/my_node_red/src/nodes.dart';
 import 'package:flutter/material.dart';
 
-import 'my_node_grid.dart';
-import 'my_node_red/node_editor.dart';
+import 'my_node_editor/node_editor.dart';
+import 'nodes/my_blocks.dart';
 
 class MyNodeEditor extends StatefulWidget {
   const MyNodeEditor({super.key});
@@ -11,21 +10,61 @@ class MyNodeEditor extends StatefulWidget {
   State<MyNodeEditor> createState() => _MyNodeEditorState();
 }
 
-class _MyNodeEditorState extends State<MyNodeEditor> {
-  NodesManager nodesManager = NodesManager();
-
-  final NodeEditorController _controller = NodeEditorController();
+class _MyNodeEditorState extends State<MyNodeEditor>
+    with PropertyMixin<String> {
+  final NodeEditorController controller = NodeEditorController();
   final FocusNode _focusNode = FocusNode();
-
+  final FocusNode comp_focusNode = FocusNode();
+  final FocusNode _focusNode2 = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+  final TextEditingController comp_controller = TextEditingController();
   @override
   void initState() {
+    controller.addSelectListener((Connection conn) {
+      debugPrint("ON SELECT inNode: ${conn.inNode}, inPort: ${conn.inPort}");
+    });
+
+    controller.addNode(
+      myComponentNode(
+        'node_1_1',
+        comp_focusNode,
+        comp_controller,
+      ),
+      NodePosition.afterLast,
+    );
+    controller.addNode(
+      printerNode('print_1', _focusNode2, _controller),
+      NodePosition.afterLast,
+    );
+    // controller.addNode(
+    //   componentNode('node_1_3'),
+    //   NodePosition.afterLast,
+    // );
+    // controller.addNode(
+    //   receiverNode('node_2_1', _focusNode2, _controller),
+    //   NodePosition.afterLast,
+    // );
+    // controller.addNode(
+    //   binaryNode('node_3_1'),
+    //   NodePosition.afterLast,
+    // );
+    // controller.addNode(
+    //   sinkNode('node_4_1'),
+    //   NodePosition.afterLast,
+    // );
     super.initState();
+  }
+
+  void _addNewNode() {
+    controller.addNode(
+      printerNode('print_1', _focusNode2, _controller),
+      NodePosition.afterLast,
+    );
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
@@ -33,162 +72,25 @@ class _MyNodeEditorState extends State<MyNodeEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("data"),
-      ),
-      body: MyNodeGrid(focusNode: _focusNode, controller: _controller),
-      floatingActionButton: _fab(),
-    );
-  }
-
-  FloatingActionButton _fab() {
-    return FloatingActionButton(
-      onPressed: () {
-        // Add new node at random position
-        final nodeNumber = _controller.nodes.length + 1;
-        final randomX = 100.0 + (nodeNumber * 50);
-        final randomY = 100.0 + (nodeNumber * 50);
-
-        ContainerNodeWidget _testBlock = _trainTestBlock('Node $nodeNumber');
-
-        // nodesManager.addNode(_testBlock, NodePosition.afterLast);
-        // _controller.nodesManager.nodes;
-        // _controller.addNode(
-        //   _testBlock,
-        //   NodePosition.centerScreen,
-        // );
-        for (var port in _controller.nodesManager.nodes.values
-            .toList()[0]
-            .properties
-            .values
-            .toList()) {
-          print(port);
-        }
-        print(_controller.nodesManager.nodes.values.toList()[0].properties);
-        print(_controller.nodesManager.nodes.values.toList()[0].name);
-      },
-      child: const Icon(Icons.add),
-    );
-  }
-
-  ContainerNodeWidget _trainTestBlock(String name) {
-    return ContainerNodeWidget(
-      name: name,
-      typeName: 'train_test',
-      backgroundColor: Colors.green.shade800,
-      radius: 100,
-      width: 200,
-      contentPadding: const EdgeInsets.all(4),
-      selectedBorder: Border.all(color: Colors.white),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InPortWidget(
-                name: 'PortIn1',
-                onConnect: (String name, String port) {
-                  this._controller.nodes.values;
-                  print("connected");
-                  print("name: $name -- port : $port");
-                  return true;
-                },
-                icon: const Icon(
-                  Icons.circle_outlined,
-                  color: Colors.yellowAccent,
-                  size: 20,
-                ),
-                iconConnected: const Icon(
-                  Icons.circle,
-                  color: Colors.yellowAccent,
-                  size: 20,
-                ),
-                multiConnections: false,
-                connectionTheme:
-                    ConnectionTheme(color: Colors.yellowAccent, strokeWidth: 2),
-              ),
-            ],
-          ),
-          const Icon(Icons.safety_divider),
-          OutPortWidget(
-            name: 'PortOut1',
-            icon: Transform.flip(
-              flipX: true,
-              child: const Icon(
-                Icons.arrow_back,
-                color: Colors.blue,
-                size: 24,
-              ),
-            ),
-            iconConnected: const Icon(
-              Icons.pause_circle,
-              color: Colors.deepOrange,
-              size: 24,
-            ),
-            multiConnections: false,
-            connectionTheme:
-                ConnectionTheme(color: Colors.deepOrange, strokeWidth: 2),
-          ),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("Demo Nodes"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                debugPrint('controller.toMap(): ${controller.toJson()}');
+              },
+              icon: const Icon(Icons.abc))
         ],
       ),
-    );
-  }
-
-  ContainerNodeWidget _printBlock(String name) {
-    return ContainerNodeWidget(
-      name: name,
-      typeName: 'print_block',
-      backgroundColor: Colors.green.shade800,
-      radius: 100,
-      width: 200,
-      contentPadding: const EdgeInsets.all(4),
-      selectedBorder: Border.all(color: Colors.white),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              InPortWidget(
-                name: 'PortIn1',
-                onConnect: (String name, String port) => true,
-                icon: const Icon(
-                  Icons.circle_outlined,
-                  color: Colors.yellowAccent,
-                  size: 20,
-                ),
-                iconConnected: const Icon(
-                  Icons.circle,
-                  color: Colors.yellowAccent,
-                  size: 20,
-                ),
-                multiConnections: false,
-                connectionTheme:
-                    ConnectionTheme(color: Colors.yellowAccent, strokeWidth: 2),
-              ),
-            ],
-          ),
-          const Icon(Icons.safety_divider),
-          OutPortWidget(
-            name: 'PortOut1',
-            icon: Transform.flip(
-              flipX: true,
-              child: const Icon(
-                Icons.arrow_back,
-                color: Colors.blue,
-                size: 24,
-              ),
-            ),
-            iconConnected: const Icon(
-              Icons.pause_circle,
-              color: Colors.deepOrange,
-              size: 24,
-            ),
-            multiConnections: false,
-            connectionTheme:
-                ConnectionTheme(color: Colors.deepOrange, strokeWidth: 2),
-          ),
-        ],
+      body: NodeEditor(
+        focusNode: _focusNode,
+        controller: controller,
+        background: const GridBackground(),
+        infiniteCanvasSize: 5000,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _addNewNode,
+        child: const Icon(Icons.add),
       ),
     );
   }
