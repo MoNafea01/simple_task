@@ -1,5 +1,6 @@
 import 'package:ai_gen/helper/helper.dart';
 import 'package:ai_gen/sonnet_code.dart';
+import 'package:ai_gen/vs_node_view/data/standard_interfaces/vs_list_interface.dart';
 import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
 
@@ -135,7 +136,7 @@ class VSHelper {
         widgetOffset: offset,
         outputData: VSListOutputData(
           type: "Output",
-          outputFunction: (data) async => Helper.parseList(controller.text),
+          outputFunction: (data) => Helper.parseList(controller.text),
         ),
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
@@ -170,19 +171,16 @@ class VSHelper {
         outputData: [
           VSListOutputData(
             type: "X_train",
-            outputFunction: (data) {
-              // Explicitly type the List as List<double>
-              return trainTestSplit(data["data"])
-                  .then<List<double>>((result) => result['X_train'] ?? [])
-                  .catchError((error) => []); // Explicitly return List<double>
+            outputFunction: (data) async {
+              Map<String, List<double>> x = await trainTestSplit(data["data"]);
+              return x['X_train']!;
             },
           ),
           VSListOutputData(
             type: "X_test",
             outputFunction: (data) {
-              return trainTestSplit(data["data"])
-                  .then<List<double>>((result) => result['X_test'] ?? [])
-                  .catchError((error) => []); // Explicitly return List<double>
+              return [4, 5, 6];
+              // trainTestSplit(data["data"]);
             },
           ),
         ],

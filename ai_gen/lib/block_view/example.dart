@@ -44,26 +44,32 @@ class _VSNodeExampleState extends State<VSNodeExample> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  print(
-                      "nodeDataProvider.nodeManager.getOutputNodes: ${nodeDataProvider.nodeManager.getOutputNodes}");
-                  Iterable<MapEntry<String, dynamic>> entries =
-                      nodeDataProvider.nodeManager.getOutputNodes.map(
-                    (e) => e.evaluate(
-                      onError: (_, __) => Future.delayed(Duration.zero, () {
-                        print(_.toString());
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            backgroundColor: Colors.deepOrange,
-                            content: Text('An error occured'),
-                          ),
-                        );
-                      }),
-                    ),
-                  );
+                onPressed: () async {
+                  List<MapEntry<String, dynamic>> entries = nodeDataProvider
+                      .nodeManager.getOutputNodes
+                      .map(
+                        (e) => e.evaluate(
+                          onError: (_, __) => Future.delayed(Duration.zero, () {
+                            print(_.toString());
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Colors.deepOrange,
+                                content: Text('An error occured'),
+                              ),
+                            );
+                          }),
+                        ),
+                      )
+                      .toList();
 
-                  results = entries.map((e) => "${e.key}: ${e.value}");
+                  for (var i = 0; i < entries.length; i++) {
+                    var x = await entries[i].value;
+                    entries[i] = MapEntry(entries[i].key, x);
+                  }
 
+                  results = entries.map((e) {
+                    return "${e.key}: ${e.value}";
+                  });
                   setState(() {});
                 },
                 child: const Text("Evaluate"),
