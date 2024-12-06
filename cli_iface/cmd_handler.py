@@ -6,9 +6,9 @@ from handlers.block_handler import handle_block_command
 def cmd_handler(command,mode=False):
     try:
         if mode:
-            command = "aino "+command
+            command = "aino " + command
+
         args = command.split()
-        
         if not args:
             return "No command entered."
 
@@ -18,31 +18,72 @@ def cmd_handler(command,mode=False):
 
         elif cmd == "aino":
             sub_cmd = args[1]
-            # Delegate to specific handlers
-            if sub_cmd in {"create_user", "load_user", "remove_user","mkusr","selusr","rmusr"}:
-                return handle_user_command(sub_cmd, args[2:])
-            elif sub_cmd in {"create_project", "select_project", "deselect_project", "list_projects","remove_project",
-                             "mkprj","selprj","dselprj","lsprj","rmprj"}:
-                return handle_project_command(sub_cmd, args[2:])
-            elif sub_cmd in {"create_workflow", "select_workflow", "list_workflows", "finish_workflow", 
-            "remove_workflow","mkwf","selwf","lswf","fnwf","rmwf"}:
-                return handle_workflow_command(sub_cmd, args[2:])
-            elif sub_cmd in {"make", "edit", "list_blocks", "remove","mkblk","edblk","lsblk","rmblk"}:
-                return handle_block_command(sub_cmd, args[2:])
-            elif sub_cmd in {"list_commands","help"}:
-                helper = f"""Available commands:\n\nUser commands:\n\tcreate_user | mkusr\t<user_name> <password>\n\tload_user   | selusr\t<user_name> <password>\n\tremove_user | rmusr\t<user_name>
-                \nProject commands:\n\tcreate_project    | mkprj\t<project_name>\n\tselect_project    | selprj\t<project_name>\n\tremove_project    | rmprj\t<project_name>\n\tdeselect_project  | dselprj\n\tlist_projects     | lsprj
-                \nWorkflow commands:\n\tcreate_workflow | mkwf\t<workflow_name>\n\tselect_workflow | selwf\t<workflow_name>\n\tremove_workflow | rmwf\t<workflow_name>\n\tlist_workflows  | lswf\n\tfinish_workflow | fnwf
-                \nBlock commands:\n\tmake        | mkblk\t<block_name> <ports_in,ports_out> <params_names,params_values>\n\tedit        | edblk\t<block_name> <ports_in,ports_out> <params_names,params_values>\n\tremove      | rmblk\t<block_name>\n\tlist_blocks | lsblk
-                \n\nGeneral commands:\n\tlist_commands | thelp"""
-                return helper
-            elif args[1] == 'aino' and mode==True:
-                return "Mode activated."
-
-            else:
-                return f"Unknown sub-command: {sub_cmd}"
-
-        else:
-            return f"Unknown command: {cmd}"
+            if len(args) == 1:
+                return handle_sub_command(sub_cmd)
+            return handle_sub_command(sub_cmd, args[2:])
+        
+        return f"Unknown command: {cmd}"
     except Exception as e:
         return f"Error: {str(e)}"
+
+def handle_sub_command(sub_cmd, args):
+    commands = {
+        "create_user": handle_user_command, "mkusr": handle_user_command,
+        "load_user": handle_user_command, "selusr": handle_user_command,
+        "remove_user": handle_user_command, "rmusr": handle_user_command,
+        "create_project": handle_project_command, "mkprj": handle_project_command,
+        "select_project": handle_project_command, "selprj": handle_project_command,
+        "deselect_project": handle_project_command, "dselprj": handle_project_command,
+        "list_projects": handle_project_command, "lsprj": handle_project_command,
+        "remove_project": handle_project_command, "rmprj": handle_project_command,
+        "create_workflow": handle_workflow_command, "mkwf": handle_workflow_command,
+        "select_workflow": handle_workflow_command, "selwf": handle_workflow_command,
+        "deselect_workflow": handle_workflow_command, "dselwf": handle_workflow_command,
+        "list_workflows": handle_workflow_command, "lswf": handle_workflow_command,
+        "finish_workflow": handle_workflow_command, "fnwf": handle_workflow_command,
+        "remove_workflow": handle_workflow_command, "rmwf": handle_workflow_command,
+        "make": handle_block_command, "mkblk": handle_block_command, 
+        "edit": handle_block_command, "edblk": handle_block_command,
+        "remove": handle_block_command, "rmblk": handle_block_command,
+        "list_blocks": handle_block_command, "lsblk": handle_block_command,
+        "list_commands": help_commands, "help": help_commands,
+        "aino": activate_mode
+    }
+
+    if sub_cmd in commands:
+        return commands[sub_cmd](sub_cmd,args)
+    else:
+        return f"Unknown sub-command: {sub_cmd}"
+
+def help_commands():
+    """
+    Provides a list of available commands.
+    """
+    return """
+    Available commands:
+    User commands:
+        create_user | mkusr <user_name> <password>
+        load_user | selusr <user_name> <password>
+        remove_user | rmusr <user_name>
+    Project commands:
+        create_project | mkprj <project_name>
+        select_project | selprj <project_name>
+        remove_project | rmprj <project_name>
+        deselect_project | dselprj
+        list_projects | lsprj
+    Workflow commands:
+        create_workflow | mkwf <workflow_name>
+        select_workflow | selwf <workflow_name>
+        remove_workflow | rmwf <workflow_name>
+        list_workflows | lswf
+        finish_workflow | fnwf
+    Block commands:
+        make | mkblk <block_name> <ports_in,ports_out> <params_names,params_values>
+        edit | edblk <block_name> <ports_in,ports_out> <params_names,params_values>
+        remove | rmblk <block_name>
+        list_blocks | lsblk
+    General commands:
+        list_commands | help
+    """
+def activate_mode(*args):
+    return "Mode activated."
