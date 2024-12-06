@@ -6,13 +6,20 @@ path = os.path.dirname(os.path.abspath(__file__)) + '/../'
 data_file_path = path + 'data_store.json'
 
 def handle_user_command(sub_cmd, args):
-    if sub_cmd == "create_user" or sub_cmd == "mkusr":
-        return create_user(*args)
-    elif sub_cmd == "load_user" or sub_cmd == "selusr":
-        return load_user(*args)
-    elif sub_cmd == "remove_user" or sub_cmd == "rmusr":
-        return remove_user(*args)
+
+    commands = {
+        "create_user": create_user,
+        "mkusr": create_user,
+        "load_user": load_user,
+        "selusr": load_user,
+        "remove_user": remove_user,
+        "rmusr": remove_user,
+    }
+
+    if sub_cmd in commands:
+        return commands[sub_cmd](*args)
     return f"Unknown user command: {sub_cmd}"
+
 
 def create_user(username, password):
     data_store = get_data_store()
@@ -24,14 +31,18 @@ def create_user(username, password):
     data_store["active_user"] = username
     return f"User {username} already exists."
 
+
 def load_user(username, password):
+
     data_store = get_data_store()
     if username in data_store["users"] and data_store["users"][username]["password"] == password:
         data_store["active_user"] = username
         return f"User {username} loaded."
     return "Invalid username or password."
 
+
 def remove_user(username):
+    
     data_store = get_data_store()
     if not is_sudo():
         return "You must be an admin to remove users."

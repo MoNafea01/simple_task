@@ -1,63 +1,84 @@
 from data_store import get_data_store
 
 def handle_workflow_command(sub_cmd, args):
-    if sub_cmd == "create_workflow" or sub_cmd == "mkwf":
-        return create_workflow(*args)
-    elif sub_cmd == "select_workflow" or sub_cmd == "selwf":
-        return select_workflow(*args)
-    elif sub_cmd == "list_workflows" or sub_cmd == "lswf":
-        return list_workflows()
-    elif sub_cmd == "finish_workflow" or sub_cmd == "fnwf":
-        return finish_workflow()
-    elif sub_cmd == "remove_workflow" or sub_cmd == "rmwf":
-        return remove_workflow(*args)
+    commands = {
+        "create_workflow": create_workflow,
+        "mkwf": create_workflow,
+        "select_workflow": select_workflow,
+        "selwf": select_workflow,
+        "list_workflows": list_workflows,
+        "lswf": list_workflows,
+        "finish_workflow": finish_workflow,
+        "fnwf": finish_workflow,
+        "remove_workflow": remove_workflow,
+        "rmwf": remove_workflow,
+    }
+
+    if sub_cmd in commands:
+        return commands[sub_cmd](*args)
     return f"Unknown workflow command: {sub_cmd}"
+
 
 def create_workflow(workflow_name):
     data_store = get_data_store()
-    active_project = data_store["active_project"]
-    active_user = data_store["active_user"]
-    if not active_project or not active_user:
+    project = _get_active_project(data_store)
+    if not project:
         return "No project selected."
-    project = data_store["users"][active_user]["projects"][active_project]
+    
     project[workflow_name] = {}
     data_store["active_workflow"] = workflow_name
     return f"Workflow {workflow_name} created."
 
+
 def select_workflow(workflow_name):
     data_store = get_data_store()
-    active_project = data_store["active_project"]
-    active_user = data_store["active_user"]
-    if not active_project or not active_user:
+    project = _get_active_project(data_store)
+    if not project:
         return "No project selected."
-    project = data_store["users"][active_user]["projects"][active_project]
+    
     if workflow_name in project:
         data_store["active_workflow"] = workflow_name
         return f"Workflow {workflow_name} selected."
     return "Workflow does not exist."
 
-def remove_workflow(workflow_name):
+def deselect_workflow():
     data_store = get_data_store()
-    active_user = data_store['active_user']
-    active_project = data_store["active_project"]
-    if active_project is None:
+    data_store["active_workflow"] = None
+    return "Workflow deselected."
+
+
+def remove_workflow(workflow_name):
+
+    data_store = get_data_store()
+    project = _get_active_project(data_store)
+    if not project:
         return "No project selected."
-    project = data_store['users'][active_user]["projects"][active_project]
+    
     if workflow_name in project:
         del project[workflow_name]
-        print( f"Workflow {workflow_name} removed.")
-        return workflow_name
-    print( "Workflow does not exist.")
-    return None
+        return f"Workflow {workflow_name} removed."
+    return "Workflow does not exist."
+
 
 def list_workflows():
     data_store = get_data_store()
-    active_project = data_store["active_project"]
-    active_user = data_store["active_user"]
-    if not active_project or not active_user:
+    project = _get_active_project(data_store)
+
+    if not project:
         return "No project selected."
-    workflows = data_store["users"][active_user]["projects"][active_project]
-    return "Workflows: " + ", ".join(workflows.keys())
+    return "Workflows: " + ", ".join(project.keys())
+
 
 def finish_workflow():
     return "Workflow finished."
+
+def _get_active_project(data_store):
+    """
+    Helper to retrieve the active project from the data store.
+    """
+    user = data_store.get("active_user")
+    project = data_store.get("active_project")
+    if not (user and project):
+        return None
+
+    return data_store["users"][user]["projects"][project]
