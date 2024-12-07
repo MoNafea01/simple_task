@@ -21,7 +21,7 @@ def handle_block_command(sub_cmd, args):
 def create_block(block_name, ports, params):
     data_store = get_data_store()
     workflow = _get_active_workflow(data_store)
-    if not workflow:
+    if workflow is None:
         return "No workflow selected."
 
     workflow[block_name] = {"ports": ports, 
@@ -32,7 +32,7 @@ def create_block(block_name, ports, params):
 def edit_block(block_name, ports, params):
     data_store = get_data_store()
     workflow = _get_active_workflow(data_store)
-    if not workflow:
+    if workflow is None:
         return "No workflow selected."
 
     if block_name in workflow:
@@ -45,7 +45,7 @@ def remove_block(block_name):
 
     data_store = get_data_store()
     workflow = _get_active_workflow(data_store)
-    if not workflow:
+    if workflow is None:
         return "No workflow selected."
     
     if block_name in workflow:

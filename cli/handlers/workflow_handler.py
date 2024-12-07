@@ -22,7 +22,7 @@ def handle_workflow_command(sub_cmd, args):
 def create_workflow(workflow_name):
     data_store = get_data_store()
     project = _get_active_project(data_store)
-    if not project:
+    if project is None:
         return "No project selected."
     
     project[workflow_name] = {}
@@ -33,7 +33,7 @@ def create_workflow(workflow_name):
 def select_workflow(workflow_name):
     data_store = get_data_store()
     project = _get_active_project(data_store)
-    if not project:
+    if project is None:
         return "No project selected."
     
     if workflow_name in project:
@@ -51,7 +51,7 @@ def remove_workflow(workflow_name):
 
     data_store = get_data_store()
     project = _get_active_project(data_store)
-    if not project:
+    if project is None:
         return "No project selected."
     
     if workflow_name in project:
@@ -64,7 +64,7 @@ def list_workflows():
     data_store = get_data_store()
     project = _get_active_project(data_store)
 
-    if not project:
+    if project is None:
         return "No project selected."
     return "Workflows: " + ", ".join(project.keys())
 
@@ -80,5 +80,5 @@ def _get_active_project(data_store):
     project = data_store.get("active_project")
     if not (user and project):
         return None
-
+    
     return data_store["users"][user]["projects"][project]
