@@ -1,7 +1,10 @@
 from data_store import get_data_store
+import re
 
 def handle_block_command(sub_cmd, args):
 
+    args = list(map(lambda x: re.sub(r'\s+', '', x),args))
+    
     commands = {
         "make": create_block,
         "mkblk": create_block,
@@ -10,9 +13,11 @@ def handle_block_command(sub_cmd, args):
         "list_blocks": list_blocks,
         "lsblk": list_blocks,
         "remove": remove_block,
-        "rmblk": remove_block
+        "rmblk": remove_block,
+        "explore": explore_block,
+        "exblk": explore_block
     }
-
+    
     if sub_cmd in commands:
         return commands[sub_cmd](*args)
     return f"Unknown block command: {sub_cmd}"
@@ -62,6 +67,15 @@ def list_blocks():
 
     return "Blocks: " + ", ".join(workflow.keys())
 
+def explore_block(block_name):
+    data_store = get_data_store()
+    workflow = _get_active_workflow(data_store)
+    if workflow is None:
+        return "No workflow selected."
+
+    if block_name in workflow:
+        return f"Block {block_name} has ports {workflow[block_name]['ports']} and params {workflow[block_name]['params']}."
+    return f"Block {block_name} does not exist."
 
 def _get_active_workflow(data_store):
     """
