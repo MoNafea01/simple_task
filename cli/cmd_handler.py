@@ -2,6 +2,7 @@ from handlers.user_handler import handle_user_command
 from handlers.project_handler import handle_project_command
 from handlers.workflow_handler import handle_workflow_command
 from handlers.block_handler import handle_block_command
+import re
 
 def cmd_handler(command,mode=False):
     try:
@@ -46,12 +47,23 @@ def handle_sub_command(sub_cmd, args):
         "edit": handle_block_command, "edblk": handle_block_command,
         "remove": handle_block_command, "rmblk": handle_block_command,
         "list_blocks": handle_block_command, "lsblk": handle_block_command,
+        "explore": handle_block_command, "exblk": handle_block_command,
         "list_commands": help_commands, "help": help_commands,
         "aino": activate_mode
     }
+    if len(args) == 0:
+        arg = []
+    elif len(args) == 1:
+        arg = args
+    else:
+        arg = [args[0]] 
+        if args[1].startswith("("):
+            arg.extend(re.findall(r'\(.*?\)', ' '.join(args[1:])))
+        else:
+            arg.extend(args[1:])
 
     if sub_cmd in commands:
-        return commands[sub_cmd](sub_cmd,args)
+        return commands[sub_cmd](sub_cmd,arg)
     else:
         return f"Unknown sub-command: {sub_cmd}"
 
