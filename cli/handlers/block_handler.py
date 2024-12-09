@@ -47,7 +47,6 @@ def edit_block(block_name, ports, params):
 
 
 def remove_block(block_name):
-
     data_store = get_data_store()
     workflow = _get_active_workflow(data_store)
     if workflow is None:

@@ -6,6 +6,7 @@ _data_store = {
     "active_user": None,
     "active_project": None,
     "active_workflow": None,
+    "admin": [],
 }
 
 def get_data_store():
@@ -33,4 +34,5 @@ def reset_data_store():
         "active_user": None,
         "active_project": None,
         "active_workflow": None,
+        "admin": [],
     }

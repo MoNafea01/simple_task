@@ -30,7 +30,6 @@ def create_project(project_name):
 
 
 def select_project(project_name):
-
     data_store = get_data_store()
     active_user = data_store["active_user"]
     if not active_user:
@@ -42,14 +41,12 @@ def select_project(project_name):
 
 
 def deselect_project():
-
     data_store = get_data_store()
     data_store["active_project"] = None
     return "Project deselected."
 
 
 def list_projects():
-
     data_store = get_data_store()
     active_user = data_store["active_user"]
     if not active_user:
@@ -60,7 +57,6 @@ def list_projects():
 
 
 def remove_project(project_name):
-
     data_store = get_data_store()
     active_user = data_store['active_user']
     if not active_user:
