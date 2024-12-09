@@ -132,16 +132,16 @@ def help_commands(*args):
         
     Block commands:
 
-        make    <block_name> <ports_in,ports_out> <params_names,params_values>
-        edit    <block_name> <ports_in,ports_out> <params_names,params_values>
+        make    <block_name> <([ports_in],[ports_out])> <([params_names,params_values])>
+        edit    <block_name> <([ports_in],[ports_out])> <([params_names,params_values])>
         remove  <block_name>
         explore <block_name>
         list_blocks
         
         -- Shortcuts --
 
-        mkblk <block_name> <ports_in,ports_out> <params_names,params_values>
-        edblk <block_name> <ports_in,ports_out> <params_names,params_values>
+        mkblk <block_name> <([ports_in],[ports_out])> <([params_names,params_values])>
+        edblk <block_name> <([ports_in],[ports_out])> <([params_names,params_values])>
         rmblk <block_name>
         exblk <block_name>
         lsblk
