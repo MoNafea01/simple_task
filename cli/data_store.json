@@ -51,8 +51,8 @@
         }
     },
     "active_user": "admin",
-    "active_project": "prj1",
-    "active_workflow": "logreg_workflow",
+    "active_project": null,
+    "active_workflow": null,
     "admin": [
         "admin"
     ]

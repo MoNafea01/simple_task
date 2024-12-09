@@ -1,9 +1,6 @@
-import sys
 from cmd_handler import cmd_handler
 from save_load import load_data_from_file, save_data_to_file
-from data_store import get_data_store
 import os
-import re
 
 def main():
     print("Welcome to Aino CMD Interface!")

@@ -30,7 +30,7 @@ def cmd_handler(command,mode=False):
 def handle_sub_command(sub_cmd, args):
     commands = {
         "create_user": handle_user_command, "mkusr": handle_user_command,
-        "load_user": handle_user_command, "selusr": handle_user_command,
+        "select_user": handle_user_command, "selusr": handle_user_command,
         "remove_user": handle_user_command, "rmusr": handle_user_command,
         "make_admin": handle_user_command, "mkadm": handle_user_command,
 
@@ -72,38 +72,84 @@ def handle_sub_command(sub_cmd, args):
     else:
         return f"Unknown sub-command: {sub_cmd}"
 
-def help_commands():
+def help_commands(*args):
     """
     Provides a list of available commands.
     """
     return """
     Available commands:
+
     User commands:
-        mkusr  | create_user <user_name> <password>
-        selusr | load_user <user_name> <password>
-        rmusr  | remove_user <user_name>
 
+        create_user <user_name> <password>
+        select_user <user_name> <password>
+        remove_user <user_name>
+        make_admin  <user_name>
+
+        -- Shortcuts --
+
+        mkusr  <user_name> <password>
+        selusr <user_name> <password>
+        rmusr  <user_name>
+        mkadm  <user_name>
+
+        
     Project commands:
-        mkprj   | create_project <project_name>
-        selprj  | select_project <project_name>
-        rmprj   | remove_project <project_name>
-        dselprj | deselect_project
-        lsprj   | list_projects
 
+        create_project <project_name>
+        select_project <project_name>
+        remove_project <project_name>
+        deselect_project
+        list_projects
+
+        -- Shortcuts --
+
+        mkprj  <project_name>
+        selprj <project_name>
+        rmprj  <project_name>
+        dselprj
+        lsprj
+
+        
     Workflow commands:
-        mkwf  | create_workflow <workflow_name>
-        selwf | select_workflow <workflow_name>
-        rmwf  | remove_workflow <workflow_name>
-        lswf  | list_workflows
-        fnwf  | finish_workflow
-        dselwf| deselect_workflow
+
+        create_workflow <workflow_name>
+        select_workflow <workflow_name>
+        remove_workflow <workflow_name>
+        deselect_workflow
+        list_workflows
+        finish_workflow
+
+        -- Shortcuts --
+
+        mkwf  <workflow_name>
+        selwf <workflow_name>
+        rmwf  <workflow_name>
+        dselwf
+        lswf
+        fnwf
+
+        
     Block commands:
-        make   | mkblk <block_name> <ports_in,ports_out> <params_names,params_values>
-        edit   | edblk <block_name> <ports_in,ports_out> <params_names,params_values>
-        remove | rmblk <block_name>
-        lsblk  | list_blocks
+
+        make    <block_name> <ports_in,ports_out> <params_names,params_values>
+        edit    <block_name> <ports_in,ports_out> <params_names,params_values>
+        remove  <block_name>
+        explore <block_name>
+        list_blocks
+        
+        -- Shortcuts --
+
+        mkblk <block_name> <ports_in,ports_out> <params_names,params_values>
+        edblk <block_name> <ports_in,ports_out> <params_names,params_values>
+        rmblk <block_name>
+        exblk <block_name>
+        lsblk
+        
+
     General commands:
-        help    | list_commands
+
+        help
     """
 def activate_mode(*args):
     return "Mode activated."
