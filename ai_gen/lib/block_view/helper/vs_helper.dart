@@ -1,5 +1,6 @@
 import 'package:ai_gen/helper/helper.dart';
 import 'package:ai_gen/sonnet_code.dart';
+import 'package:ai_gen/vs_node_view/custom_widgets/vs_text_input_data.dart';
 import 'package:ai_gen/vs_node_view/data/standard_interfaces/vs_list_interface.dart';
 import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
@@ -172,9 +173,63 @@ class VSHelper {
       );
     },
 
+    (Offset offset, VSOutputData<dynamic>? ref) {
+      Future<Map<String, List<double>>>? splitDataFuture;
+      final testSizeController = TextEditingController()..text = "0.5";
+      final randomStateController = TextEditingController()..text = "2";
+      return VSWidgetNode(
+        type: "Test Function",
+        widgetOffset: offset,
+        setValue: (value) {},
+        getValue: () => "",
+        inputData: [
+          VSListInputData(
+            type: "data",
+            initialConnection: ref,
+          ),
+          VsTextInputData(
+            type: "test_size",
+            controller: testSizeController,
+          ),
+          VsTextInputData(
+            controller: randomStateController,
+            type: "random_state",
+          ),
+        ],
+        outputData: [
+          VSListOutputData(
+            type: "X_train",
+            outputFunction: (data) async {
+              data["data"] = await data["data"];
+              splitDataFuture = trainTestSplit(
+                data["data"],
+                testSize: double.parse(testSizeController.text),
+                randomState: int.parse(randomStateController.text),
+              );
+              Map<String, List<double>> splitData = await splitDataFuture!;
+
+              return splitData['X_train']!;
+            },
+          ),
+          VSListOutputData(
+            type: "X_test",
+            outputFunction: (data) async {
+              data["data"] = await data["data"];
+
+              splitDataFuture ??= trainTestSplit(data["data"]);
+
+              Map<String, List<double>> splitData = await splitDataFuture!;
+
+              return splitData['X_test']!;
+            },
+          ),
+        ],
+      );
+    },
+
     (Offset offset, VSOutputData? ref) {
-      final controller = TextEditingController();
-      final input = TextField(
+      final TextEditingController controller = TextEditingController();
+      final TextField input = TextField(
         controller: controller,
         decoration: const InputDecoration(
           isDense: true,
@@ -185,10 +240,12 @@ class VSHelper {
       return VSWidgetNode(
         type: "ListInput",
         widgetOffset: offset,
-        outputData: VSListOutputData(
-          type: "Output",
-          outputFunction: (data) => Helper.parseList(controller.text),
-        ),
+        outputData: [
+          VSListOutputData(
+            type: "Output",
+            outputFunction: (data) => Helper.parseList(controller.text),
+          ),
+        ],
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
         getValue: () => controller.text,
@@ -208,10 +265,12 @@ class VSHelper {
       return VSWidgetNode(
         type: "Double input",
         widgetOffset: offset,
-        outputData: VSDoubleOutputData(
-          type: "Output",
-          outputFunction: (data) => double.parse(controller.text),
-        ),
+        outputData: [
+          VSDoubleOutputData(
+            type: "Output",
+            outputFunction: (data) => double.parse(controller.text),
+          ),
+        ],
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
         getValue: () => controller.text,
@@ -230,10 +289,12 @@ class VSHelper {
       return VSWidgetNode(
         type: "int input",
         widgetOffset: offset,
-        outputData: VSIntOutputData(
-          type: "Output",
-          outputFunction: (data) => int.parse(controller.text),
-        ),
+        outputData: [
+          VSIntOutputData(
+            type: "Output",
+            outputFunction: (data) => int.parse(controller.text),
+          ),
+        ],
         child: Expanded(child: input),
         setValue: (value) => controller.text = value,
         getValue: () => controller.text,
