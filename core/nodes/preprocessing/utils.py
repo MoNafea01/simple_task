@@ -18,6 +18,7 @@ def save_node(payload):
         node_path = f'{nodes_dir}\\{node_name}_{node_id}.pkl'
         joblib.dump(node, node_path)
 
+
 def save_data(payload):
     if isinstance(payload, dict):
         node_name = payload.get('node_name')
@@ -28,20 +29,17 @@ def save_data(payload):
         node_path = f'{nodes_dir}\\{node_name}_{node_id}.pkl'
         joblib.dump(node, node_path)
 
-def load_node(payload):
-    if isinstance(payload, dict):
+
+def load_node(path: str):
+    if isinstance(path, str):
         try:
-            node_name = payload['node_name']
-            node_id = payload['node_id']
-            nodes_dir = _get_nodes_dir()
-            preprocess_path = f'{nodes_dir}\\{node_name}_{node_id}.pkl'
-            transfomer = joblib.load(preprocess_path)
-            return transfomer
+            return joblib.load(path)
         except Exception as e:
-            raise ValueError(f"Error loading transformer: {e}")
-        
+            raise ValueError(f"Error loading model: {e}")
     else:
-        raise ValueError(f"Please provide scaler payload as dict")
+        raise ValueError(f"Please provide model payload as string")
+
+
 
 def _get_nodes_dir(directory='saved\\preprocessors'):
     nodes_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -64,4 +62,13 @@ def get_attributes(transformer):
     }
     return attributes
 
+
+def handle_name(path = None):
+    name = path.split("\\")[-1].split(".")[0]
+    # remove numbers using re
+    import re
+    _name = re.sub(r'\d+', '', name)
+    _id = re.sub(r'\D', '', name)
+    _name = _name.rsplit("_", 1)[0]
+    return _name,int(_id)
 
