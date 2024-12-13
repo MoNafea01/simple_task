@@ -1,25 +1,21 @@
 from model import Model
 from fit import Fit
-from utils import load_model
+from utils import load_node
 
 class Predict:
-    def __init__(self, fit, X):
-        self.fit_payload = fit.payload
+    def __init__(self, model, X):
+        self.model_payload = model()
         self.X = X
-        self.payload = {
-            "message": "Model hadn't predicted yet",
-            "model": None,
-            'predictions': None,
-            'model_id': self.fit_payload['model_id'],
-            'model_name': self.fit_payload['model_name']
-        }
-        self.predict = self.predict_model()
+        self.payload = self.predict_model()
     
     def predict_model(self):
         try:
-            model = load_model(self.payload)
+            model = load_node(self.model_payload)
             prediction = model.predict(self.X)
-            self.payload = {"message": "Model predicted", "model": model, 'prediction': prediction}
+            self.payload = {"message": "Model predicted", "node": model, 'prediction': prediction,
+                            "node_id": self.model_payload['node_id'], 
+                            "node_name": self.model_payload['node_name']
+                            }
             return self.payload
         except Exception as e:
             raise ValueError(f"Error loading model: {e}")

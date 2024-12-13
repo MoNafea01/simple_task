@@ -4,30 +4,29 @@ import joblib
 def _make_dirs(directory):
     try:
         os.makedirs(directory, exist_ok=True)
-        print(f"Directory '{directory}' created successfully or already exists.")
     except Exception as e:
         print(f"Error creating directory: {e}")
     
-def save_model(payload):
+def save_node(payload):
     if isinstance(payload, dict):
-        model_name = payload['model_name']
-        model = payload['model']
-        model_id = payload['model_id']
+        node_name = payload['node_name']
+        node = payload['node']
+        node_id = payload['node_id']
         nodes_dir = _get_nodes_dir()
 
         _make_dirs(nodes_dir)
-        model_path = f'{nodes_dir}\\{model_name}_{model_id}.pkl'
-        joblib.dump(model, model_path)
+        node_path = f'{nodes_dir}\\{node_name}_{node_id}.pkl'
+        joblib.dump(node, node_path)
 
-def load_model(payload):
+def load_node(payload):
     if isinstance(payload, dict):
         try:
-            model_name = payload['model_name']
-            model_id = payload['model_id']
+            node_name = payload['node_name']
+            node_id = payload['node_id']
             nodes_dir = _get_nodes_dir()
-            model_path = f'{nodes_dir}\\{model_name}_{model_id}.pkl'
-            model = joblib.load(model_path)
-            return model
+            model_path = f'{nodes_dir}\\{node_name}_{node_id}.pkl'
+            transfomer = joblib.load(model_path)
+            return transfomer
         except Exception as e:
             raise ValueError(f"Error loading model: {e}")
         
@@ -36,7 +35,6 @@ def load_model(payload):
     
 def get_attributes(model):
     fitted_params = {}
-    # Check for common fitted attributes (e.g., coef_, intercept_)
     if hasattr(model, 'coef_'):
         fitted_params['coef_'] = model.coef_
     if hasattr(model, 'intercept_'):
