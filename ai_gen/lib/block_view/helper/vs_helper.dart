@@ -122,63 +122,63 @@ class VSHelper {
     //     getValue: () => controller.text,
     //   );
     // },
-    (Offset offset, VSOutputData<dynamic>? ref) {
-      Future<Map<String, List<double>>>? splitDataFuture;
-      return VSNodeData(
-        type: "train Test Split",
-        widgetOffset: offset,
-        inputData: [
-          VSListInputData(
-            type: "data",
-            initialConnection: ref,
-          ),
-          VSDoubleInputData(
-            type: "test_size",
-            initialConnection: ref,
-          ),
-          VSIntInputData(
-            type: "random_state",
-            initialConnection: ref,
-          ),
-        ],
-        outputData: [
-          VSListOutputData(
-            type: "X_train",
-            outputFunction: (data) async {
-              data["data"] = await data["data"];
-
-              splitDataFuture = trainTestSplit(
-                data["data"],
-                testSize: data["test_size"] ?? 0.5,
-                randomState: data["random_state"] ?? 2,
-              );
-              Map<String, List<double>> splitData = await splitDataFuture!;
-
-              return splitData['X_train']!;
-            },
-          ),
-          VSListOutputData(
-            type: "X_test",
-            outputFunction: (data) async {
-              data["data"] = await data["data"];
-
-              splitDataFuture ??= trainTestSplit(data["data"]);
-
-              Map<String, List<double>> splitData = await splitDataFuture!;
-
-              return splitData['X_test']!;
-            },
-          ),
-        ],
-      );
-    },
+    // (Offset offset, VSOutputData<dynamic>? ref) {
+    //   Future<Map<String, List<double>>>? splitDataFuture;
+    //   return VSNodeData(
+    //     type: "train Test Split",
+    //     widgetOffset: offset,
+    //     inputData: [
+    //       VSListInputData(
+    //         type: "data",
+    //         initialConnection: ref,
+    //       ),
+    //       VSDoubleInputData(
+    //         type: "test_size",
+    //         initialConnection: ref,
+    //       ),
+    //       VSIntInputData(
+    //         type: "random_state",
+    //         initialConnection: ref,
+    //       ),
+    //     ],
+    //     outputData: [
+    //       VSListOutputData(
+    //         type: "X_train",
+    //         outputFunction: (data) async {
+    //           data["data"] = await data["data"];
+    //
+    //           splitDataFuture = trainTestSplit(
+    //             data["data"],
+    //             testSize: data["test_size"] ?? 0.5,
+    //             randomState: data["random_state"] ?? 2,
+    //           );
+    //           Map<String, List<double>> splitData = await splitDataFuture!;
+    //
+    //           return splitData['X_train']!;
+    //         },
+    //       ),
+    //       VSListOutputData(
+    //         type: "X_test",
+    //         outputFunction: (data) async {
+    //           data["data"] = await data["data"];
+    //
+    //           splitDataFuture ??= trainTestSplit(data["data"]);
+    //
+    //           Map<String, List<double>> splitData = await splitDataFuture!;
+    //
+    //           return splitData['X_test']!;
+    //         },
+    //       ),
+    //     ],
+    //   );
+    // },
 
     (Offset offset, VSOutputData<dynamic>? ref) {
       Future<Map<String, List<double>>>? splitDataFuture;
       final testSizeController = TextEditingController()..text = "0.5";
       final randomStateController = TextEditingController()..text = "2";
       return VSWidgetNode(
-        type: "Test Function",
+        type: "train Test Split",
         widgetOffset: offset,
         setValue: (value) {},
         getValue: () => "",
