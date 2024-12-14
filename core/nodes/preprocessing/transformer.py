@@ -1,5 +1,5 @@
-from transformers import SCALERS as scalers
-from utils import save_node
+from .transformers import SCALERS
+from .utils import save_node
 
 
 class Scaler:
@@ -9,9 +9,9 @@ class Scaler:
         self.payload = self.create_scaler()
 
     def create_scaler(self):
-        if self.scaler_name not in scalers:
+        if self.scaler_name not in SCALERS:
             raise ValueError(f"Unsupported scaler: {self.scaler_name}")
-        scaler = scalers[self.scaler_name]['scaler'](**self.params)
+        scaler = SCALERS[self.scaler_name]['scaler'](**self.params)
         self.payload = {
             "message": f"Scaler created {self.scaler_name}", "params": self.params,
             "node": scaler, "node_name": self.scaler_name, "node_id": id(scaler)
@@ -19,6 +19,11 @@ class Scaler:
         save_node(self.payload)
         return self.payload
     
+    def update_params(self, params):
+        self.params = params
+        self.payload = self.create_scaler()
+        return self.payload
+
     def __str__(self):
         return str(self.payload)
     

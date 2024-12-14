@@ -1,6 +1,6 @@
-from transformer import Scaler
-from fit import Fit
-from utils import save_data, load_node, get_attributes, handle_name
+from .transformer import Scaler
+from .fit import Fit
+from .utils import save_data, load_node, get_attributes, handle_name
 
 class Transform:
     def __init__(self, data, transformer: dict|str = None):

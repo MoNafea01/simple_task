@@ -1,5 +1,5 @@
-from transformer import Scaler
-from utils import save_node, get_attributes, load_node, handle_name
+from .transformer import Scaler
+from .utils import save_node, get_attributes, load_node, handle_name
 
 
 

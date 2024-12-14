@@ -1,7 +1,7 @@
 # Model training nodes
 # core/nodes/models.py
-from models import MODELS as models
-from utils import save_node
+from .models import MODELS as models
+from .utils import save_node
 
 
 class Model:
@@ -28,6 +28,10 @@ class Model:
             "task": self.task,"node_id": id(model)}
         save_node(self.payload)
         return self.payload
+    
+    def update_params(self, params):
+        self.params = params
+        self.payload = self.create_model()
 
     def __str__(self):
         return f'{self.payload}'

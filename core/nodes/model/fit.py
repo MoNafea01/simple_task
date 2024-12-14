@@ -1,6 +1,6 @@
 # ai_operations/utils/model/model_fit.py
-from model import Model
-from utils import save_node, get_attributes, load_node, handle_name
+from .model import Model
+from .utils import save_node, get_attributes, load_node, handle_name
 
 class Fit:
     def __init__(self, X, y, model: dict|str = None):
@@ -35,7 +35,7 @@ class Fit:
         except Exception as e:
             raise ValueError(f"Error fitting model: {e}")
     
-    
+
     def __str__(self):
         return str(self.payload)
     
@@ -48,3 +48,4 @@ if __name__ == '__main__':
     model = Model('linear_regression', 'linear_models', 'regression', {})
     fit = Fit([[1, 2], [2, 3]], [3, 4], model)
     print(fit)
+    
