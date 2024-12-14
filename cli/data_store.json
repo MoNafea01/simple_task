@@ -50,7 +50,7 @@
             }
         }
     },
-    "active_user": "admin",
+    "active_user": null,
     "active_project": null,
     "active_workflow": null,
     "admin": [
