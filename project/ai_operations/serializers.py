@@ -61,10 +61,7 @@ class FitTransformSerializer(serializers.Serializer):
     preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object or path.")
 
 class TrainTestSplitSerializer(serializers.Serializer):
-    data = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField()),
-        help_text="Input features (X) as a 2D list of floats."
-    )
+    data = serializers.ListField()
     
     test_size = serializers.FloatField(default=0.25, min_value=0.0, max_value=1.0, help_text="Fraction of data to use for the test set.")
     random_state = serializers.IntegerField(required=False, allow_null=True, help_text="Random state for reproducibility.")
