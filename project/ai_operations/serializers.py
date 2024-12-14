@@ -1,18 +1,8 @@
 # api/serializers.py
 from rest_framework import serializers
-from .models import Workflow, Node
 
-class NodeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Node
-        fields = '__all__'
 
-class WorkflowSerializer(serializers.ModelSerializer):
-    nodes = NodeSerializer(many=True)
 
-    class Meta:
-        model = Workflow
-        fields = ['id', 'name', 'description', 'nodes']
 
 class ModelSerializer(serializers.Serializer):
     model_name = serializers.CharField(max_length=100)
@@ -71,14 +61,11 @@ class FitTransformSerializer(serializers.Serializer):
     preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object or path.")
 
 class TrainTestSplitSerializer(serializers.Serializer):
-    X = serializers.ListField(
+    data = serializers.ListField(
         child=serializers.ListField(child=serializers.FloatField()),
         help_text="Input features (X) as a 2D list of floats."
     )
-    y = serializers.ListField(
-        child=serializers.FloatField(),
-        help_text="Labels (y) as a list of floats."
-    )
+    
     test_size = serializers.FloatField(default=0.25, min_value=0.0, max_value=1.0, help_text="Fraction of data to use for the test set.")
     random_state = serializers.IntegerField(required=False, allow_null=True, help_text="Random state for reproducibility.")
 
