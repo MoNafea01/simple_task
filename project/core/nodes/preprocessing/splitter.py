@@ -40,20 +40,12 @@ class TrainTestSplit:
 
     def split(self):
         try:
-            # Assuming 'data' is a dictionary with input features and labels, e.g. {'X': X_data, 'y': y_data}
-            if isinstance(self.data, dict) and 'X' in self.data and 'y' in self.data:
-                X = self.data['X']
-                y = self.data['y']
-            else:
-                raise ValueError("Data must be a dictionary with 'X' and 'y' keys for features and labels.")
-
-            X_train, X_test, y_train, y_test = train_test_split(
-                X, y, test_size=self.test_size, random_state=self.random_state
+            train_data, test_data = train_test_split(
+                self.data, test_size=self.test_size, random_state=self.random_state
             )
-
             return {
-                "train_data": {"X": X_train, "y": y_train},
-                "test_data": {"X": X_test, "y": y_test},
+                "train_data":train_data,
+                "test_data": test_data,
             }
         except Exception as e:
             raise ValueError(f"Error splitting data: {e}")
