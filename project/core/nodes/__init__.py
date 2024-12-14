@@ -1,6 +1,6 @@
 from .dataLoader import DataLoader
 
-from .preprocessing.transformer import *
+from .preprocessing.preprocessor import *
 from .model import *
 
 

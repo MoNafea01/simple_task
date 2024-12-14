@@ -44,30 +44,31 @@ class PredictSerializer(serializers.Serializer):
     )
     model = serializers.JSONField()
 
-class ScalerSerializer(serializers.Serializer):
-    scaler_name = serializers.ChoiceField(choices=['standard_scaler', 'minmax_scaler', 'robust_scaler'])  # Add all supported scalers
+class PreprocessorSerializer(serializers.Serializer):
+    preprocessor_name = serializers.ChoiceField(choices=['standard_scaler', 'minmax_scaler', 'robust_scaler', 'normalizer'])  # Add all supported scalers
+    preprocessor_type = serializers.ChoiceField(choices=['scaler', 'encoding', 'imputation', 'binarization'])
     params = serializers.DictField(child=serializers.FloatField(), required=False)
 
-class FitScalerSerializer(serializers.Serializer):
+class FitPreprocessorSerializer(serializers.Serializer):
     data = serializers.ListField(
         child=serializers.ListField(child=serializers.FloatField()),
         help_text="2D list representing the data to be transformed."
     )
-    transformer = serializers.JSONField()
+    preprocessor = serializers.JSONField()
 
 class TransformSerializer(serializers.Serializer):
     data = serializers.ListField(
         child=serializers.ListField(child=serializers.FloatField()),
         help_text="2D list representing the data to be transformed."
     )
-    transformer = serializers.JSONField(required=False, allow_null=True, help_text="Transformer as JSON object.")
+    preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object.")
 
 class FitTransformSerializer(serializers.Serializer):
     data = serializers.ListField(
         child=serializers.ListField(child=serializers.FloatField()),
         help_text="2D list representing the data to be transformed."
     )
-    transformer = serializers.JSONField(required=False, allow_null=True, help_text="Transformer as JSON object or path.")
+    preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object or path.")
 
 class TrainTestSplitSerializer(serializers.Serializer):
     X = serializers.ListField(

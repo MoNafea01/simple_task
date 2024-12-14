@@ -1,40 +1,40 @@
-from .transformer import Scaler
+from .preprocessor import Preprocessor
 from .fit import Fit
 from .utils import save_data, load_node, get_attributes, handle_name, _get_nodes_dir
 
 class Transform:
-    def __init__(self, data, transformer: dict|str = None):
-        self.transformer_path = transformer
-        self.transformer = transformer() if isinstance(transformer, Fit) else (transformer() 
-                                            if isinstance(transformer, Scaler) else(transformer if isinstance(transformer, dict)
-                                            else(load_node(transformer))))
+    def __init__(self, data, preprocessor: dict|str = None):
+        self.preprocessor_path = preprocessor
+        self.preprocessor = preprocessor() if isinstance(preprocessor, Fit) else (preprocessor() 
+                                            if isinstance(preprocessor, Preprocessor) else(preprocessor if isinstance(preprocessor, dict)
+                                            else(load_node(preprocessor))))
         self.data = data
         self.payload = self.transform()
 
     def transform(self):
-        if isinstance(self.transformer, dict):
+        if isinstance(self.preprocessor, dict):
             try:
                 import joblib
                 nodes_dir = _get_nodes_dir()
-                transformer = joblib.load(f'{nodes_dir}\\{self.transformer['node_name']}_{self.transformer['node_id']}.pkl')
-                transformed = transformer.transform(self.data)
-                attributes = get_attributes(transformer)
-                payload = {"message": "Data transformed", "node": transformer,
-                                'node_name': self.transformer['node_name'],
-                                'node_id': self.transformer['node_id'], 'attributes': attributes,
+                preprocessor = joblib.load(f'{nodes_dir}\\{self.preprocessor['node_name']}_{self.preprocessor['node_id']}.pkl')
+                transformed = preprocessor.transform(self.data)
+                attributes = get_attributes(preprocessor)
+                payload = {"message": "Data transformed", "node": preprocessor,
+                                'node_name': self.preprocessor['node_name'],
+                                'node_id': self.preprocessor['node_id'], 'attributes': attributes,
                                 'transformed_data': transformed
                                 }
                 save_data(payload)
                 del payload['node']
                 return payload
             except Exception as e:
-                raise ValueError(f"Error loading transformer: {e}")
+                raise ValueError(f"Error loading preprocessor: {e}")
         try:
-            node_name, node_id = handle_name(self.transformer_path)
-            transformer = self.transformer
-            transformed = transformer.transform(self.data)
-            attributes = get_attributes(transformer)
-            payload = {"message": "Data transformed", "node": transformer,
+            node_name, node_id = handle_name(self.preprocessor_path)
+            preprocessor = self.preprocessor
+            transformed = preprocessor.transform(self.data)
+            attributes = get_attributes(preprocessor)
+            payload = {"message": "Data transformed", "node": preprocessor,
                             'node_name': node_name, 'node_id': node_id, 'attributes': attributes,
                             'transformed_data': transformed
                             }

@@ -2,7 +2,7 @@
 # core/workflow_executor.py
 from dataLoader import DataLoader
 
-from preprocessing.transformer import Scaler
+from backend.core.nodes.preprocessing.preprocessor import Scaler
 from preprocessing.transform import Transform
 from preprocessing.splitter import TrainTestSplit
 from preprocessing.fit_transform import FitTransform

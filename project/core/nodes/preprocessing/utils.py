@@ -37,7 +37,7 @@ def load_node(path: str):
         except Exception as e:
             raise ValueError(f"Error loading model: {e}")
     else:
-        raise ValueError(f"Please provide model payload as string")
+        raise ValueError(f"Please provide preprocessor payload as string")
 
 
 

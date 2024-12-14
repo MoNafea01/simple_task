@@ -1,28 +1,28 @@
-from .transformer import Scaler
+from .preprocessor import Preprocessor
 from .utils import save_data, save_node, load_node, get_attributes, handle_name, _get_nodes_dir
 
 class FitTransform:
-    def __init__(self, data, transformer: dict | str = None):
-        self.transformer_path = transformer
-        self.transformer = transformer() if isinstance(transformer, Scaler) else (transformer if isinstance(transformer, dict)
-                                      else load_node(transformer))
+    def __init__(self, data, preprocessor: dict | str = None):
+        self.preprocessor_path = preprocessor
+        self.preprocessor = preprocessor() if isinstance(preprocessor, Preprocessor) else (preprocessor if isinstance(preprocessor, dict)
+                                      else load_node(preprocessor))
         self.data = data
         self.payload = self.fit_transform()
 
     def fit_transform(self):
-        if isinstance(self.transformer, dict):
+        if isinstance(self.preprocessor, dict):
             try:
                 import joblib
                 nodes_dir = _get_nodes_dir()
-                transformer = joblib.load(f'{nodes_dir}\\{self.transformer['node_name']}_{self.transformer['node_id']}.pkl')
-                if hasattr(transformer, 'fit_transform'):
-                    transformed_data = transformer.fit_transform(self.data)
-                    attributes = get_attributes(transformer)
+                preprocessor = joblib.load(f'{nodes_dir}\\{self.preprocessor['node_name']}_{self.preprocessor['node_id']}.pkl')
+                if hasattr(preprocessor, 'fit_transform'):
+                    transformed_data = preprocessor.fit_transform(self.data)
+                    attributes = get_attributes(preprocessor)
                     payload = {
                         "message": "Data fitted and transformed",
-                        "node": transformer,
-                        'node_name': self.transformer['node_name'],
-                        'node_id': self.transformer['node_id'],
+                        "node": preprocessor,
+                        'node_name': self.preprocessor['node_name'],
+                        'node_id': self.preprocessor['node_id'],
                         'attributes': attributes,
                         'transformed_data': transformed_data
                     }
@@ -31,14 +31,14 @@ class FitTransform:
                     del payload['node']
                     return payload
             except Exception as e:
-                raise ValueError(f"Error fitting and transforming transformer: {e}")
+                raise ValueError(f"Error fitting and transforming preprocessor: {e}")
         try:
-            node_name, node_id = handle_name(self.transformer_path)
-            transformed_data = self.transformer.fit_transform(self.data)
-            attributes = get_attributes(self.transformer)
+            node_name, node_id = handle_name(self.preprocessor_path)
+            transformed_data = self.preprocessor.fit_transform(self.data)
+            attributes = get_attributes(self.preprocessor)
             payload = {
                 "message": "Data fitted and transformed",
-                "node": self.transformer,
+                "node": self.preprocessor,
                 'node_name': node_name,
                 'node_id': node_id,
                 'attributes': attributes,
