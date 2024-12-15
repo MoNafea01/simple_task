@@ -14,12 +14,15 @@ from core.nodes.model.fit import Fit as FitModel
 from core.nodes.model.predict import Predict
 from core.nodes.preprocessing.preprocessor import Preprocessor
 from core.nodes.preprocessing.transform import Transform
-from core.nodes.preprocessing.splitter import TrainTestSplit
+from core.nodes.preprocessing.train_test_split import TrainTestSplit
+from core.nodes.preprocessing.splitter import Splitter
 from core.nodes.preprocessing.fit_transform import FitTransform
 from core.nodes.preprocessing.fit import Fit as FitPreprocessor
 from core.nodes.metrics import Evaluator
 from .serializers import WorkflowSerializer, ModelSerializer, FitModelSerializer, PredictSerializer, PreprocessorSerializer
 from .serializers import FitPreprocessorSerializer, TransformSerializer, FitTransformSerializer, TrainTestSplitSerializer
+from .serializers import SplitterSerializer
+
 
 class WorkflowViewSet(viewsets.ModelViewSet):
     queryset = Workflow.objects.all()
@@ -63,10 +66,8 @@ class WorkflowViewSet(viewsets.ModelViewSet):
                 score = evaluator.evaluate(y_test, y_pred)
         return score
 
-
-@api_view(['POST'])
-def create_model(request):
-    if request.method == 'POST':
+class CreateModelView(APIView):
+    def post(self, request):
         serializer = ModelSerializer(data=request.data)
         if serializer.is_valid():
             # Extract data from the serializer
@@ -78,26 +79,29 @@ def create_model(request):
                 task=data['task'],
                 params=data['params']
             )
-            return Response(model_instance(), status=status.HTTP_201_CREATED)
+            output_channel = request.query_params.get('output', None)
+            response_data = model_instance(output_channel)
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FitModelAPIView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = FitModelSerializer(data=request.data)
         if serializer.is_valid():
-            X = serializer.validated_data['X']
-            y = serializer.validated_data['y']
-            model = serializer.validated_data['model']
-
             try:
-                # Fit the model
-                fitter = FitModel(X, y, model=model)
-                response_data = fitter()  # Get the JSON-serializable payload
-                return Response(response_data, status=status.HTTP_200_OK)
+                # Extract validated data
+                X = serializer.validated_data.get('X')
+                y = serializer.validated_data.get('y')
+                model = serializer.validated_data.get('model')
+
+                # Instantiate Fit and perform the fitting
+                fitter = FitModel(X=X, y=y, model=model)
+                payload = fitter.payload
+
+                return Response(payload, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class PredictAPIView(APIView):
     """
@@ -113,7 +117,8 @@ class PredictAPIView(APIView):
             try:
                 # Perform prediction
                 predictor = Predict(X, model=model)
-                response_data = predictor()  # Get the JSON-serializable payload
+                output_channel = request.query_params.get('output', None)
+                response_data = predictor(output_channel)
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -135,7 +140,8 @@ class PreprocessorAPIView(APIView):
             try:
                 # Create the Preprocessor
                 preprocessor = Preprocessor(preprocessor_name, preprocessor_type, params=params)
-                response_data = preprocessor()  # Get the JSON-serializable payload
+                output_channel = request.query_params.get('output', None)
+                response_data = preprocessor(output_channel)
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -156,7 +162,8 @@ class FitPreprocessorAPIView(APIView):
             try:
                 # Create a Fit instance
                 fit_instance = FitPreprocessor(data=data, preprocessor=preprocessor)
-                response_data = fit_instance()  # Get the JSON-serializable payload
+                output_channel = request.query_params.get('output', None)
+                response_data = fit_instance(output_channel)
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -178,7 +185,8 @@ class TransformAPIView(APIView):
             try:
                 # Create a Transform instance and get the result
                 transform_instance = Transform(data=data, preprocessor=preprocessor)
-                response_data = transform_instance()  # Get the JSON-serializable payload
+                output_channel = request.query_params.get('output', None)
+                response_data = transform_instance(output_channel)
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -200,36 +208,48 @@ class FitTransformAPIView(APIView):
             try:
                 # Create a FitTransform instance and get the result
                 fit_transform_instance = FitTransform(data=data, preprocessor=preprocessor)
-                response_data = fit_transform_instance()  # Get the JSON-serializable payload
+                output_channel = request.query_params.get('output', None)
+                response_data = fit_transform_instance(output_channel)
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-class TrainTestSplitAPIView(APIView):
-    """
-    API view for splitting data into training and test sets.
-    """
 
+class SplitterAPIView(APIView):
+    def post(self, request):
+        serializer = SplitterSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data['data']
+            # Initialize and use the Splitter class
+            splitter_instance = Splitter(data)
+            output_channel = request.query_params.get('output', None)
+            response_data = splitter_instance(output_channel)
+            
+            return Response(response_data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TrainTestSplitAPIView(APIView):
     def post(self, request, *args, **kwargs):
-        # Deserialize the incoming data using the serializer
         serializer = TrainTestSplitSerializer(data=request.data)
         if serializer.is_valid():
-            data = {
-                'X': serializer.validated_data['X'],
-                'y': serializer.validated_data['y']
-            }
-            test_size = serializer.validated_data['test_size']
-            random_state = serializer.validated_data.get('random_state', None)
-
             try:
-                # Create the TrainTestSplit instance and process the data
-                split_instance = TrainTestSplit(data, test_size=test_size, random_state=random_state)
-                response_data = split_instance()  # Get the result as a dictionary
+                # Extract validated data
+                data = serializer.validated_data.get('data')
+                params = {
+                    'test_size': serializer.validated_data.get('test_size'),
+                    'train_size': serializer.validated_data.get('train_size'),
+                    'random_state': serializer.validated_data.get('random_state'),
+                }
+                # Filter out None values in params
+                params = {k: v for k, v in params.items() if v is not None}
+
+                # Instantiate TrainTestSplit and perform the split
+                splitter = TrainTestSplit(data=data, **params)
+                output_channel = request.query_params.get('output', None)
+                response_data = splitter(output_channel)
+
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

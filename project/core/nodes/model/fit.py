@@ -7,8 +7,8 @@ class Fit:
         self.model_path = model
         self.model = model() if isinstance(model, Model) else (model if isinstance(model, dict) 
                                 else(load_node(model)))
-        self.X = X
-        self.y = y
+        self.X = X.get('data') if isinstance(X, dict) else X
+        self.y = y.get('data') if isinstance(y, dict) else y
         self.payload = self.fit()
     
     def fit(self):
@@ -16,12 +16,17 @@ class Fit:
             try:
                 import joblib
                 nodes_dir = _get_nodes_dir()
-                model = joblib.load(f'{nodes_dir}\\{self.model['node_name']}_{self.model['node_id']}.pkl')
+                model = joblib.load(f'{nodes_dir}\\{self.model.get('node_name')}_{self.model.get('node_id')}.pkl')
+                import numpy as np
+                self.y = np.array(self.y).reshape(-1,1)
                 model = model.fit(self.X, self.y)
                 attributes = get_attributes(model)
                 payload = {"message": "Model fitted", 
-                                'attributes': attributes , 'node_id': self.model['node_id'],
-                                'node_name': self.model['node_name'], 'node': model}
+                           'attributes': attributes , 
+                           'node_id': self.model.get('node_id'),
+                           'node_name': self.model.get('node_name'), 
+                           'node': model
+                           }
                 save_node(payload)
                 del payload['node']
                 return payload
@@ -32,8 +37,11 @@ class Fit:
             model = self.model.fit(self.X, self.y)
             attributes = get_attributes(model)
             payload = {"message": "Model fitted", 
-                            'attributes': attributes , 'node_id': node_id,
-                            'node_name':node_name, 'node': model}
+                       'attributes': attributes , 
+                       'node_id': node_id,
+                       'node_name':node_name, 
+                       'node': model
+                       }
             save_node(payload)
             del payload['node']
             return payload
@@ -44,13 +52,13 @@ class Fit:
     def __str__(self):
         return str(self.payload)
     
-    def __call__(self):
+    def __call__(self, *args):
         return self.payload
 
 
 if __name__ == '__main__':
-    model = "C:\\Users\\a1mme\\OneDrive\\Desktop\\MO\\test_grad\\backend\\core\\nodes\\saved\\models\\linear_regression_1983596293552.pkl"
-    # model = Model('linear_regression', 'linear_models', 'regression', {})
+    # model = "C:\\Users\\a1mme\\OneDrive\\Desktop\\MO\\test_grad\\backend\\core\\nodes\\saved\\models\\linear_regression_1983596293552.pkl"
+    model = Model('linear_regression', 'linear_models', 'regression', {})
     fit = Fit([[1, 2], [2, 3]], [3, 4], model)
     print(fit)
     
