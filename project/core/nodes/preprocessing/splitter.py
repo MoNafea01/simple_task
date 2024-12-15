@@ -17,11 +17,11 @@ class Splitter:
         try:
             d1, d2 = self.data[0], self.data[1]
             payload = {"message": "Data split successful", 
-                   "data": [d1,d2],
-                   "node_name": "Splitter", 
-                   "node_type": "preprocessing", 
-                   "node_id": id(self), 
-                   }
+                       "data": [d1,d2],
+                       "node_name": "Splitter", 
+                       "node_type": "preprocessing", 
+                       "node_id": id(self), 
+                       }
             return payload
         except Exception as e:
             raise ValueError(f"Error splitting data: {e}")
