@@ -52,8 +52,12 @@ class VSHelper {
             ),
       ],
     ),
+
     VSSubgroup(
+
+
       name: "linear_models",
+
       subgroup: [
         VSSubgroup(
           name: "regression",
@@ -78,6 +82,8 @@ class VSHelper {
                 ],
               );
             },
+
+
             (Offset offset, VSOutputData? ref) {
               final TextEditingController ridgeController =
                   TextEditingController()..text = "1.0";
@@ -102,11 +108,495 @@ class VSHelper {
                   ),
                 ],
               );
-            }
+            },
+
+              (Offset offset, VSOutputData? ref) {
+              final TextEditingController lassoController =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "lasso",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: lassoController)
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "regression",
+                        "params": {"alpha": double.parse(lassoController.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+            
+              (Offset offset, VSOutputData? ref) {
+              final TextEditingController sgdRegressioncontroller =
+                  TextEditingController()..text = "l2";
+              return VSNodeData(
+                type: "sgd_regression",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: sgdRegressioncontroller)
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "regression",
+                        "params": {"penalty": sgdRegressioncontroller.text},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
           ],
-        )
+          
+        ),
+
+        VSSubgroup(name: "classification", 
+
+        subgroup:  [
+
+(Offset offset, VSOutputData? ref) {
+              // ignore: non_constant_identifier_names
+              // final TextEditingController Ccontroller =
+              //     TextEditingController()..text = "1.0";
+
+                   // ignore: non_constant_identifier_names
+                   final TextEditingController Penaltycontroller =
+                  TextEditingController()..text = "l2";
+
+              return VSNodeData(
+                type: "logistic_regression",
+                widgetOffset: offset,
+                inputData: [
+                  // VsTextInputData(
+                    
+                  //     type: "Parameter", controller: Ccontroller),
+                      
+                      VsTextInputData(
+                      type: "Parameter", controller: Penaltycontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "logistic_regression",
+                        "model_type": "linear_models",
+                        "task": "classification",
+                        "params": {
+                          
+                          //"C": double.parse(Ccontroller.text),
+                        
+                        "penalty": Penaltycontroller.text
+                        
+                         },
+
+                        
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+            ,(Offset offset, VSOutputData? ref) {
+              final TextEditingController ridgeClassifiercontroller =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "ridge_classifier",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: ridgeClassifiercontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "classification",
+                        "params": {"alpha": double.parse(ridgeClassifiercontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+            
+              (Offset offset, VSOutputData? ref) {
+              final TextEditingController sgdClassifiercontroller =
+                  TextEditingController()..text = "l2";
+              return VSNodeData(
+                type: "sgd_classifier",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: sgdClassifiercontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "classification",
+                        "params": {"penalty": sgdClassifiercontroller.text},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+            
+            
+            ]
+
+        
+        
+        
+        ),
+
+       
+
+
+
       ],
     ),
+
+
+VSSubgroup(name: "svm",
+ subgroup: [
+  VSSubgroup(name: "regression", 
+  subgroup: [
+
+  ]),
+
+  VSSubgroup(name: "classification", 
+  subgroup: [
+    (Offset offset, VSOutputData? ref) {
+              final TextEditingController rbfSvccontroller =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "rbf_svc",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: rbfSvccontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "svm",
+                        "model_type": "rbf_svc",
+                        "task": "classification",
+                        "params": {"C": double.parse(rbfSvccontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+            (Offset offset, VSOutputData? ref) {
+              final TextEditingController polySvccontroller =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "poly_svc",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: polySvccontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "svm",
+                        "model_type": "rbf_svc",
+                        "task": "classification",
+                        "params": {"C": double.parse(polySvccontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+
+(Offset offset, VSOutputData? ref) {
+              final TextEditingController sigmoidSvccontroller =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "sigmoid_svc",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: sigmoidSvccontroller),
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "svm",
+                        "model_type": "rbf_svc",
+                        "task": "classification",
+                        "params": {"C": double.parse(sigmoidSvccontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+
+
+  ]),
+ ]),
+
+
+     VSSubgroup(name: "naive_bayes",
+         subgroup: [
+
+          VSSubgroup(name: "classification",
+           subgroup: [
+            (Offset offset, VSOutputData? ref) {
+              
+              return VSNodeData(
+                type: "gaussian_nb",
+                widgetOffset: offset,
+                inputData: [],
+                  
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "gaussian_nb",
+                        "model_type": "naive_bayes",
+                        "task": "classification",
+                        "params": {},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+
+          (Offset offset, VSOutputData? ref) {
+              
+              return VSNodeData(
+                type: "multinomial_nb",
+                widgetOffset: offset,
+                inputData: [],
+                  
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "gaussian_nb",
+                        "model_type": "naive_bayes",
+                        "task": "classification",
+                        "params": {},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+
+            
+          (Offset offset, VSOutputData? ref) {
+              
+              return VSNodeData(
+                type: "bernoulli_nb",
+                widgetOffset: offset,
+                inputData: [],
+                  
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "gaussian_nb",
+                        "model_type": "naive_bayes",
+                        "task": "classification",
+                        "params": {},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+           ]),
+
+
+
+         ]),
+
+         VSSubgroup(name: "Knn", 
+         subgroup: [
+          VSSubgroup(name: "regression", subgroup: [
+
+             (Offset offset, VSOutputData? ref) {
+              // ignore: non_constant_identifier_names
+              final TextEditingController Knnrcontroller =
+                  TextEditingController()..text = "5";
+              return VSNodeData(
+                type: "knnr",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(type: "Parameter", controller: Knnrcontroller)
+                ],
+                  
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "knn",
+                        "model_type": "knnr",
+                        "task": "regression",
+                        "params": {"n_neighbors":int.parse(Knnrcontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+
+
+          ]),
+
+           VSSubgroup(name: "classification", subgroup: [
+             (Offset offset, VSOutputData? ref) {
+               // ignore: non_constant_identifier_names
+               final TextEditingController Knnccontroller =
+                  TextEditingController()..text = "5";
+              return VSNodeData(
+                type: "knnc",
+                widgetOffset: offset,
+                inputData: [
+                   VsTextInputData(type: "Parameter", controller: Knnccontroller)
+                ],
+                  
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "gaussian_nb",
+                        "model_type": "naive_bayes",
+                        "task": "classification",
+                        "params": {"n_neighbors":int.parse(Knnccontroller.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+           ]),
+
+         ]),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // VSSubgroup(
     //   name: "Logic",
     //   subgroup: [

@@ -12,7 +12,7 @@ class ServerManager {
 
     try {
       String batchFilePath =
-          "D:\\College\\4th\\Graduation Project\\simple_task\\backend\\run_server.bat";
+          "D:\\GraduationProject\\backend\\run_server.bat";
 
       await _killExistingServers();
 

@@ -39,8 +39,8 @@ class _VSNodeExampleState extends State<VSNodeExample> {
             child: Legend(),
           ),
           Positioned(
-            top: 0,
-            right: 0,
+            top: 50,
+            right: 10,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
