@@ -1,7 +1,9 @@
+import 'package:ai_gen/functions/create_model.dart';
+import 'package:ai_gen/functions/train_test_split.dart';
 import 'package:ai_gen/helper/helper.dart';
-import 'package:ai_gen/sonnet_code.dart';
 import 'package:ai_gen/vs_node_view/custom_widgets/vs_text_input_data.dart';
 import 'package:ai_gen/vs_node_view/data/standard_interfaces/vs_list_interface.dart';
+import 'package:ai_gen/vs_node_view/data/standard_interfaces/vs_model_interface.dart';
 import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
 
@@ -48,6 +50,61 @@ class VSHelper {
                 ),
               ],
             ),
+      ],
+    ),
+    VSSubgroup(
+      name: "linear_models",
+      subgroup: [
+        VSSubgroup(
+          name: "regression",
+          subgroup: [
+            (Offset offset, VSOutputData? ref) {
+              return VSNodeData(
+                type: "linear_regression",
+                widgetOffset: offset,
+                inputData: [],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "regression",
+                        "params": {},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+            (Offset offset, VSOutputData? ref) {
+              final TextEditingController ridgeController =
+                  TextEditingController()..text = "1.0";
+              return VSNodeData(
+                type: "ridge",
+                widgetOffset: offset,
+                inputData: [
+                  VsTextInputData(
+                      type: "Parameter", controller: ridgeController)
+                ],
+                outputData: [
+                  VSModelOutputData(
+                    type: "Output",
+                    outputFunction: (data) => createModel(
+                      {
+                        "model_name": "LinearRegression",
+                        "model_type": "linear_models",
+                        "task": "regression",
+                        "params": {"alpha": double.parse(ridgeController.text)},
+                      },
+                    ),
+                  ),
+                ],
+              );
+            }
+          ],
+        )
       ],
     ),
     // VSSubgroup(
@@ -221,6 +278,51 @@ class VSHelper {
               Map<String, List<double>> splitData = await splitDataFuture!;
 
               return splitData['X_test']!;
+            },
+          ),
+        ],
+      );
+    },
+    (Offset offset, VSOutputData<dynamic>? ref) {
+      final modelNameController = TextEditingController()..text = "0.5";
+      final modelTypeController = TextEditingController()..text = "2";
+      final taskController = TextEditingController()..text = "2";
+      final paramsController = TextEditingController()..text = "2";
+      return VSWidgetNode(
+        type: "Create Model",
+        widgetOffset: offset,
+        setValue: (value) {},
+        getValue: () => "",
+        inputData: [
+          VsTextInputData(
+            type: "Model Name",
+            controller: modelNameController,
+          ),
+          VsTextInputData(
+            type: "Model Type",
+            controller: modelTypeController,
+          ),
+          VsTextInputData(
+            controller: taskController,
+            type: "Task",
+          ),
+          VsTextInputData(
+            controller: paramsController,
+            type: "Params",
+          ),
+        ],
+        outputData: [
+          VSModelOutputData(
+            type: "Model",
+            outputFunction: (data) async {
+              final splitDataFuture = await createModel({
+                "model_name": modelNameController.text,
+                "model_type": modelTypeController.text,
+                "task": taskController.text,
+                "params": paramsController.text,
+              });
+
+              return splitDataFuture;
             },
           ),
         ],
