@@ -22,10 +22,14 @@ class Model:
         if self.model_name not in models[self.model_type][self.task]:
             raise ValueError(f"Unsupported model type: {self.model_name}")
         
-        model = models[self.model_type][self.task][self.model_name]['model'](**self.params)
-        payload = {"message": f"Model created {self.model_name}", "params": self.params, 
-                        "node_name": self.model_name, "node_type": self.model_type, 
-                        "task": self.task,"node_id": id(model), "node": model}
+        model = models[self.model_type][self.task][self.model_name].get('node')(**self.params)
+        payload = {"message": f"Model created {self.model_name}",
+                   "params": self.params, 
+                    "node_name": self.model_name, 
+                    "node_type": self.model_type, 
+                    "task": self.task,"node_id": id(model), 
+                    "node": model
+                    }
         save_node(payload)
         del payload['node']
         return payload
@@ -37,7 +41,7 @@ class Model:
     def __str__(self):
         return f'{self.payload}'
     
-    def __call__(self):
+    def __call__(self, *args):
         return self.payload
 
 

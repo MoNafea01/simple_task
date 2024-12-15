@@ -8,7 +8,7 @@ class Fit:
         self.preprocessor_path = preprocessor
         self.preprocessor = preprocessor() if isinstance(preprocessor, Preprocessor) else (preprocessor if isinstance(preprocessor, dict)
                                       else load_node(preprocessor))
-        self.data = data
+        self.data = data.get('data') if isinstance(data, dict) else data
         self.payload = self.fit()
 
     def fit(self):
@@ -16,16 +16,17 @@ class Fit:
             try:
                 import joblib
                 nodes_dir = _get_nodes_dir()
-                preprocessor = joblib.load(f'{nodes_dir}\\{self.preprocessor['node_name']}_{self.preprocessor['node_id']}.pkl')
+                preprocessor = joblib.load(f'{nodes_dir}\\{self.preprocessor.get('node_name')}_{self.preprocessor.get('node_id')}.pkl')
                 preprocessor = preprocessor.fit(self.data)
                 if hasattr(preprocessor, 'fit_transform'):
                     preprocessor = preprocessor.fit(self.data)
                     attributes = get_attributes(preprocessor)
-                    payload = {"message": "preprocessor Fitted", "node": preprocessor,
-                                    'attributes': attributes,
-                                    'node_name':self.preprocessor['node_name'],
-                                    'node_id': self.preprocessor['node_id']
-                                    }
+                    payload = {"message": "preprocessor Fitted", 
+                               "node": preprocessor,
+                               'attributes': attributes,
+                               'node_name':self.preprocessor.get('node_name'),
+                               'node_id': self.preprocessor.get('node_id')
+                               }
                     save_node(payload)
                     del payload['node']
                     return payload
@@ -36,9 +37,11 @@ class Fit:
             preprocessor = self.preprocessor.fit(self.data)
             attributes = get_attributes(preprocessor)
             payload = {"message": "preprocessor Fitted",
-                            'attributes': attributes,'node_id': node_id,
-                            'node_name':node_name, "node": preprocessor
-                            }
+                       'attributes': attributes,
+                       'node_id': node_id,
+                       'node_name':node_name, 
+                       "node": preprocessor
+                       }
             save_node(payload)
             del payload['node']
             return payload
@@ -48,7 +51,7 @@ class Fit:
     def __str__(self):
         return str(self.payload)
     
-    def __call__(self):
+    def __call__(self, *args):
         return self.payload
     
 

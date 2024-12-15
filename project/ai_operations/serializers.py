@@ -1,8 +1,21 @@
 # api/serializers.py
 from rest_framework import serializers
+from .models import Workflow, Node
 
 
 
+
+class NodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Node
+        fields = '__all__'
+
+class WorkflowSerializer(serializers.ModelSerializer):
+    nodes = NodeSerializer(many=True)
+
+    class Meta:
+        model = Workflow
+        fields = ['id', 'name', 'description', 'nodes']
 
 class ModelSerializer(serializers.Serializer):
     model_name = serializers.CharField(max_length=100)
@@ -11,58 +24,44 @@ class ModelSerializer(serializers.Serializer):
     params = serializers.JSONField()
 
 class FitModelSerializer(serializers.Serializer):
-    X = serializers.ListField(
-        child=serializers.ListField(
-            child=serializers.FloatField(),
-            min_length=1
-        ),
-        min_length=1
+    X = serializers.JSONField(required=False)
+    y = serializers.JSONField(required=False)
+    model = serializers.JSONField(
+        required=True,
+        help_text="Model identifier or path."
     )
-    y = serializers.ListField(
-        child=serializers.FloatField(),
-        min_length=1
-    )
-    model = serializers.JSONField()
 
 class PredictSerializer(serializers.Serializer):
-    X = serializers.ListField(
-        child=serializers.ListField(
-            child=serializers.FloatField(),
-            min_length=1
-        ),
-        min_length=1
-    )
+    X = serializers.JSONField(required=False)
     model = serializers.JSONField()
 
 class PreprocessorSerializer(serializers.Serializer):
     preprocessor_name = serializers.ChoiceField(choices=['standard_scaler', 'minmax_scaler', 'robust_scaler', 'normalizer'])  # Add all supported scalers
     preprocessor_type = serializers.ChoiceField(choices=['scaler', 'encoding', 'imputation', 'binarization'])
-    params = serializers.DictField(child=serializers.FloatField(), required=False)
+    params = serializers.JSONField(required=False)
 
 class FitPreprocessorSerializer(serializers.Serializer):
-    data = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField()),
-        help_text="2D list representing the data to be transformed."
-    )
+    data = serializers.JSONField()
     preprocessor = serializers.JSONField()
 
 class TransformSerializer(serializers.Serializer):
-    data = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField()),
-        help_text="2D list representing the data to be transformed."
-    )
+    data = serializers.JSONField()
     preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object.")
 
 class FitTransformSerializer(serializers.Serializer):
-    data = serializers.ListField(
-        child=serializers.ListField(child=serializers.FloatField()),
-        help_text="2D list representing the data to be transformed."
-    )
+    data = serializers.JSONField()
     preprocessor = serializers.JSONField(required=False, allow_null=True, help_text="preprocessor as JSON object or path.")
+    
+class SplitterSerializer(serializers.Serializer):
+    data = serializers.JSONField()
 
 class TrainTestSplitSerializer(serializers.Serializer):
-    data = serializers.ListField()
-    
-    test_size = serializers.FloatField(default=0.25, min_value=0.0, max_value=1.0, help_text="Fraction of data to use for the test set.")
-    random_state = serializers.IntegerField(required=False, allow_null=True, help_text="Random state for reproducibility.")
-
+    data = serializers.JSONField()
+    test_size = serializers.FloatField(
+        required=False,
+        help_text="Proportion of the dataset to include in the test split."
+    )
+    random_state = serializers.IntegerField(
+        required=False,
+        help_text="Random state for reproducibility."
+    )

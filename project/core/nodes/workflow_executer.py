@@ -4,7 +4,7 @@ from dataLoader import DataLoader
 
 from backend.core.nodes.preprocessing.preprocessor import Scaler
 from preprocessing.transform import Transform
-from preprocessing.splitter import TrainTestSplit
+from backend.core.nodes.preprocessing.train_test_split import TrainTestSplit
 from preprocessing.fit_transform import FitTransform
 
 from model.model import Model
