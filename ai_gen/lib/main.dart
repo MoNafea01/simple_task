@@ -1,135 +1,79 @@
-import 'package:ai_gen/sonnet_code.dart';
+import 'package:ai_gen/features/node_view/presentation/node_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-import 'block_view/example.dart';
+import 'core/server_manager.dart';
 
 void main() async {
-  // print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
+  // Create ServerManager
+  ServerManager serverManager =
+      GetIt.I.registerSingleton<ServerManager>(ServerManager());
+
+  // Stop any existing servers
+  await serverManager.stopServer();
+
+  // Start server and wait for it to be fully operational
+  if (true) {
+    await serverManager.startServer();
+  }
+
+  // print(await ApiCall()
+  //     .trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());
 }
 
-TextEditingController controller = TextEditingController();
-
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final ServerManager _serverManager = GetIt.I.get<ServerManager>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+
+    // Stop the server when the app is closing
+    _serverManager.stopServer();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // Restart server if it's not running
+        // _serverManager.startServer();
+        break;
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+        // _serverManager.stopServer();
+        break;
+      case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
+        // Do nothing or handle as needed
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Test Demo',
+      title: 'AI Gen',
       theme: ThemeData(
         scaffoldBackgroundColor: const Color.fromARGB(255, 46, 46, 46),
       ),
-      home: const VSNodeExample(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  String? output;
-
-  void _incrementCounter() async {
-    try {
-      // Get the input text from the controller and parse it as a list
-      List<double> data = controller.text
-          .split(',') // Split the string by commas
-          .map((e) => double.parse(e.trim())) // Parse each element to a double
-          .toList();
-
-      print('Parsed data: $data');
-
-      output = "Loading ...";
-
-      // Call your trainTestSplit method with the parsed data
-      final result = await trainTestSplit(data, testSize: 0.3, randomState: 42);
-
-      // Display the result
-      output =
-          'Training set: ${result['X_train']}\nTest set: ${result['X_test']}';
-
-      print('Training set: ${result['X_train']}');
-      print('Test set: ${result['X_test']}');
-    } catch (e) {
-      // If there is an error (e.g., invalid input format), show an error message
-      output =
-          'Error: Invalid input format. Please enter comma-separated numbers.';
-      print('Error: $e');
-    }
-
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBar(context),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(10),
-              child: CustomTextField(),
-            ),
-            Text(
-              '$output',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Train',
-        child: const Icon(Icons.refresh),
-      ),
-    );
-  }
-
-  AppBar appBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: const Text("Demo"),
-    );
-  }
-}
-
-class CustomTextField extends StatelessWidget {
-  const CustomTextField({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        label: const Text('array of Data'),
-        suffixIcon: IconButton(
-          onPressed: () {
-            controller.clear();
-          },
-          icon: Icon(Icons.clear, color: Colors.grey[600]),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 18.0, horizontal: 20.0),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.black),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0),
-          borderSide: const BorderSide(color: Colors.blueAccent),
-        ),
-      ),
-      style: const TextStyle(color: Colors.black87, fontSize: 16.0),
+      home: const Scaffold(body: NodeView()),
     );
   }
 }
