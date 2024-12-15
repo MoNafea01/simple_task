@@ -18,7 +18,7 @@ Future<Map<String, List<double>>> trainTestSplit(
       options: Options(contentType: Headers.jsonContentType),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final jsonResponse = response.data;
       return {
         'X_train': List<double>.from(jsonResponse['train_data']),

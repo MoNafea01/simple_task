@@ -1,9 +1,9 @@
+import 'package:ai_gen/features/node_view/data/functions/api_call.dart';
 import 'package:ai_gen/features/node_view/presentation/node_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
 import 'core/server_manager.dart';
-import 'features/node_view/data/functions/train_test_split.dart';
 
 void main() async {
   // Create ServerManager
@@ -18,7 +18,8 @@ void main() async {
     await serverManager.startServer();
   }
 
-  print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
+  print(await ApiCall()
+      .trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());
 }
 
