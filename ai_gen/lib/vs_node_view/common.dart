@@ -19,13 +19,17 @@ String getRandomString(int length) => String.fromCharCodes(
       ),
     );
 
-RenderBox findAndUpdateWidgetPosition({
+RenderBox? findAndUpdateWidgetPosition({
   required GlobalKey widgetAnchor,
   required BuildContext context,
   required VSInterfaceData data,
 }) {
+  if (widgetAnchor.currentContext == null) {
+    return null;
+  }
+
   final renderBox =
-      widgetAnchor.currentContext?.findRenderObject() as RenderBox;
+      widgetAnchor.currentContext!.findRenderObject() as RenderBox;
   Offset position = renderBox.localToGlobal(getWidgetCenter(renderBox));
 
   final provider = VSNodeDataProvider.of(context);

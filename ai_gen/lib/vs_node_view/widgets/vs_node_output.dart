@@ -61,8 +61,9 @@ class _VSNodeOutputState extends State<VSNodeOutput> {
 
   @override
   Widget build(BuildContext context) {
-    final firstItem = widget.data.nodeData is VSWidgetNode
-        ? (widget.data.nodeData as VSWidgetNode).child
+    final Widget firstItem = widget.data.nodeData is VSWidgetNode &&
+            (widget.data.nodeData as VSWidgetNode).child != null
+        ? (widget.data.nodeData as VSWidgetNode).child!
         : Text(widget.data.title);
 
     return Row(

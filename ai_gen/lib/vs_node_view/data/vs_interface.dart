@@ -12,7 +12,7 @@ abstract class VSInterfaceData {
     this.interfaceIconBuilder,
     String? title,
     this.toolTip,
-  }) : _title = title ?? "";
+  }) : _title = title;
 
   ///The color this interface will display in the UI
   Color get interfaceColor;
@@ -34,9 +34,9 @@ abstract class VSInterfaceData {
   ///The title displayed on the interface
   ///
   ///Usefull for localization
-  String get title => _title.isNotEmpty ? _title : type;
+  String get title => _title ?? type;
   set title(String data) => _title = data;
-  String _title = "";
+  String? _title;
 
   ///A tooltip displayed on the widget
   final String? toolTip;
