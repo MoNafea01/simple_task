@@ -9,6 +9,7 @@ void main() async {
   // Create ServerManager
   ServerManager serverManager =
       GetIt.I.registerSingleton<ServerManager>(ServerManager());
+  ;
 
   // Stop any existing servers
   await serverManager.stopServer();
