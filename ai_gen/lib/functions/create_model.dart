@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 Future<AIModel> createModel(Map<String, dynamic> modelData) async {
   final dio = Dio();
 
-  var data = {
+  Map<String, dynamic> data = {
     "model_name": modelData['model_name'],
-    "params": modelData['params'],
     "model_type": modelData['model_type'],
     "task": modelData['task'],
+    "params": modelData['params'],
   };
 
   print(data);
@@ -22,7 +22,6 @@ Future<AIModel> createModel(Map<String, dynamic> modelData) async {
     if (response.statusCode == 200 || response.statusCode == 201) {
       final jsonResponse = response.data;
       final model = AIModel.fromJson(jsonResponse);
-      print("model: ${model.toJson()}");
       return model;
     } else {
       throw Exception('Failed to perform createModel');
@@ -30,6 +29,7 @@ Future<AIModel> createModel(Map<String, dynamic> modelData) async {
   } on DioException catch (e) {
     // Handle Dio-specific exceptions
     if (e.response != null) {
+      print(e.response?.data);
       throw Exception(
           'Failed to perform createModel: ${e.response?.statusCode}');
     } else {

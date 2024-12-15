@@ -10,9 +10,9 @@ class ServerManager {
   Future<void> startServer() async {
     if (_isServerRunning) return;
 
+    String pathEldemy = "D:\\College\\4th\\Graduation Project\\simple_task";
     try {
-      String batchFilePath =
-          "D:\\GraduationProject\\backend\\run_server.bat";
+      String batchFilePath = "$pathEldemy\\backend\\run_server.bat";
 
       await _killExistingServers();
 
@@ -68,6 +68,7 @@ class ServerManager {
   }
 
   Future<void> _killExistingServers() async {
+    return;
     try {
       // Kill all Python processes and processes on port 8000
       if (Platform.isWindows) {
@@ -86,6 +87,7 @@ class ServerManager {
   }
 
   Future<void> stopServer() async {
+    return;
     if (_serverProcess != null) {
       try {
         // Kill all Python processes

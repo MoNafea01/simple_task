@@ -2,7 +2,7 @@ import 'package:ai_gen/vs_node_view/vs_node_view.dart';
 import 'package:flutter/material.dart';
 
 import 'helper/legend.dart';
-import 'helper/vs_helper.dart';
+import 'node_builder/node_builder.dart';
 
 class VSNodeExample extends StatefulWidget {
   const VSNodeExample({super.key});
@@ -15,7 +15,7 @@ class _VSNodeExampleState extends State<VSNodeExample> {
   Iterable<String>? results;
 
   VSNodeDataProvider nodeDataProvider = VSNodeDataProvider(
-    nodeManager: VSNodeManager(nodeBuilders: VSHelper.nodeBuilders),
+    nodeManager: VSNodeManager(nodeBuilders: NodeBuilder.nodeBuilders),
   );
 
   @override

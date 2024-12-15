@@ -9,13 +9,14 @@ void main() async {
   // Create ServerManager
   ServerManager serverManager =
       GetIt.I.registerSingleton<ServerManager>(ServerManager());
-  ;
 
   // Stop any existing servers
   await serverManager.stopServer();
 
   // Start server and wait for it to be fully operational
-  await serverManager.startServer();
+  if (!true) {
+    await serverManager.startServer();
+  }
 
   print(await trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());

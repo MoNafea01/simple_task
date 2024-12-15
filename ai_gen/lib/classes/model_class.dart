@@ -1,43 +1,50 @@
 class AIModel {
-  String message;
-  Map<String, dynamic> params;
-  String nodeName;
-  String nodeType;
+  String? message;
+  String modelName;
+  String modelType;
   String task;
-  int nodeId;
+  Map<String, dynamic>? params;
+  int? modelId;
 
   AIModel({
-    required this.message,
-    required this.params,
-    required this.nodeName,
-    required this.nodeType,
+    this.message,
+    this.params,
+    required this.modelName,
+    required this.modelType,
     required this.task,
-    required this.nodeId,
+    this.modelId,
   });
 
   factory AIModel.fromJson(Map<String, dynamic> json) {
     return AIModel(
       message: json['message'],
       params: json['params'],
-      nodeName: json['node_name'],
-      nodeType: json['node_type'],
+      modelName: json['node_name'],
+      modelType: json['node_type'],
       task: json['task'],
-      nodeId: json['node_id'],
+      modelId: json['node_id'],
     );
   }
 
   Map<String, dynamic> toJson() => {
         'message': message,
-        'params': params,
-        'node_name': nodeName,
-        'node_type': nodeType,
+        'params': params ?? {},
+        'node_name': modelName,
+        'node_type': modelType,
         'task': task,
-        'node_id': nodeId,
+        'node_id': modelId,
+      };
+
+  Map<String, dynamic> createModelToJson() => {
+        'model_name': modelName,
+        'model_type': modelType,
+        'task': task,
+        'params': params ?? {},
       };
 
   @override
   String toString() {
     // TODO: implement toString
-    return 'AIModel: $nodeId';
+    return 'AIModel: $modelId';
   }
 }
