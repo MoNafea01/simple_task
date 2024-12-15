@@ -11,7 +11,6 @@ class TrainTestSplit:
     def split(self):
         try:
             output = train_test_split(self.data,**self.params)
-            output = [output[0], output[1]]
             payload = {"message": "Data split successful", 
                        "data": output,
                        "params": self.params, 
