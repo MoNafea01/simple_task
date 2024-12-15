@@ -15,9 +15,8 @@ class Splitter:
     
     def split(self):
         try:
-            d1, d2 = self.data[0], self.data[1]
             payload = {"message": "Data split successful", 
-                       "data": [d1,d2],
+                       "data":self.data,
                        "node_name": "Splitter", 
                        "node_type": "preprocessing", 
                        "node_id": id(self), 
