@@ -1,6 +1,9 @@
+import 'package:ai_gen/features/node_view/data/functions/api_call.dart';
 import 'package:ai_gen/features/node_view/data/functions/train_test_split.dart';
 import 'package:ai_gen/node_package/custom_widgets/vs_text_input_data.dart';
 import 'package:ai_gen/node_package/data/standard_interfaces/vs_list_interface.dart';
+import 'package:ai_gen/node_package/data/standard_interfaces/vs_map_interface.dart';
+import 'package:ai_gen/node_package/data/standard_interfaces/vs_model_interface.dart';
 import 'package:ai_gen/node_package/data/vs_interface.dart';
 import 'package:ai_gen/node_package/data/vs_subgroup.dart';
 import 'package:ai_gen/node_package/special_nodes/vs_widget_node.dart';
@@ -12,8 +15,150 @@ class FunctionsSubgroup extends VSSubgroup {
           name: "Functions",
           subgroup: [
             _trainTestSplit,
+            _fitModel,
+            _predict,
+            _fitPreprocessor,
+            _transform,
           ],
         );
+
+  static VSWidgetNode _fitPreprocessor(
+      Offset offset, VSOutputData<dynamic>? ref) {
+    return VSWidgetNode(
+      type: "Fit Preprocess",
+      widgetOffset: offset,
+      setValue: (value) {},
+      getValue: () => "",
+      inputData: [
+        VSModelInputData(
+          type: "data",
+          initialConnection: ref,
+        ),
+        VSMapInputData(
+          type: "preprocessor",
+          initialConnection: ref,
+        ),
+      ],
+      outputData: [
+        VSMapOutputData(
+          type: "Fitted data",
+          outputFunction: (data) async {
+            data["data"] = await data["data"];
+            Map<String, dynamic> predictions = await ApiCall().fit_preprocessor(
+              data["data"],
+              data["preprocessor"],
+            );
+
+            return predictions;
+          },
+        ),
+      ],
+    );
+  }
+
+  static VSWidgetNode _transform(Offset offset, VSOutputData<dynamic>? ref) {
+    return VSWidgetNode(
+      type: "transform Preprocess",
+      widgetOffset: offset,
+      setValue: (value) {},
+      getValue: () => "",
+      inputData: [
+        VSModelInputData(
+          type: "data",
+          initialConnection: ref,
+        ),
+        VSMapInputData(
+          type: "preprocessor",
+          initialConnection: ref,
+        ),
+      ],
+      outputData: [
+        VSMapOutputData(
+          type: "transformed",
+          outputFunction: (data) async {
+            data["data"] = await data["data"];
+            Map<String, dynamic> predictions = await ApiCall().transform(
+              data["data"],
+              data["preprocessor"],
+            );
+            return predictions;
+          },
+        ),
+      ],
+    );
+  }
+
+  static VSWidgetNode _predict(Offset offset, VSOutputData<dynamic>? ref) {
+    return VSWidgetNode(
+      type: "Predict",
+      widgetOffset: offset,
+      setValue: (value) {},
+      getValue: () => "",
+      inputData: [
+        VSModelInputData(
+          type: "Model",
+          initialConnection: ref,
+        ),
+        VSMapInputData(
+          type: "X",
+          initialConnection: ref,
+        ),
+      ],
+      outputData: [
+        VSMapOutputData(
+          type: "predictions",
+          outputFunction: (data) async {
+            data["Model"] = await data["Model"];
+            Map<String, dynamic> predictions = await ApiCall().predict(
+              data["Model"],
+              data["X"],
+            );
+
+            return predictions;
+          },
+        ),
+      ],
+    );
+  }
+
+  static VSWidgetNode _fitModel(Offset offset, VSOutputData<dynamic>? ref) {
+    return VSWidgetNode(
+      type: "Fit Model",
+      widgetOffset: offset,
+      setValue: (value) {},
+      getValue: () => "",
+      inputData: [
+        VSModelInputData(
+          type: "Model",
+          initialConnection: ref,
+        ),
+        VSMapInputData(
+          type: "X",
+          initialConnection: ref,
+        ),
+        VSMapInputData(
+          type: "Y",
+          initialConnection: ref,
+        ),
+      ],
+      outputData: [
+        VSMapOutputData(
+          type: "Fitted Model",
+          outputFunction: (data) async {
+            print("Fitted Model $data");
+            data["Model"] = await data["Model"];
+            Map<String, dynamic> fittedModel = await ApiCall().fitModel(
+              data["Model"],
+              data["X"],
+              data["Y"],
+            );
+
+            return fittedModel;
+          },
+        ),
+      ],
+    );
+  }
 
   static VSWidgetNode _trainTestSplit(
       Offset offset, VSOutputData<dynamic>? ref) {

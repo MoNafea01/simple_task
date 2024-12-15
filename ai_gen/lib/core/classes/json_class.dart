@@ -1,4 +1,4 @@
-class Nafe3 {
+class Nafe3Json {
   dynamic nafe3;
 
   @override

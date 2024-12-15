@@ -68,7 +68,6 @@ class ServerManager {
   }
 
   Future<void> _killExistingServers() async {
-    return;
     try {
       // Kill all Python processes and processes on port 8000
       if (Platform.isWindows) {
@@ -87,7 +86,6 @@ class ServerManager {
   }
 
   Future<void> stopServer() async {
-    return;
     if (_serverProcess != null) {
       try {
         // Kill all Python processes

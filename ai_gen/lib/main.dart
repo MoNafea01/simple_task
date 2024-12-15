@@ -1,4 +1,3 @@
-import 'package:ai_gen/features/node_view/data/functions/api_call.dart';
 import 'package:ai_gen/features/node_view/presentation/node_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -14,12 +13,12 @@ void main() async {
   await serverManager.stopServer();
 
   // Start server and wait for it to be fully operational
-  if (!true) {
+  if (true) {
     await serverManager.startServer();
   }
 
-  print(await ApiCall()
-      .trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
+  // print(await ApiCall()
+  //     .trainTestSplit([1, 2, 3, 4], testSize: 0.2, randomState: 1));
   runApp(const MyApp());
 }
 
@@ -53,11 +52,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         // Restart server if it's not running
-        _serverManager.startServer();
+        // _serverManager.startServer();
         break;
       case AppLifecycleState.paused:
       case AppLifecycleState.inactive:
-        _serverManager.stopServer();
+        // _serverManager.stopServer();
         break;
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
@@ -70,11 +69,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Test Demo',
+      title: 'AI Gen',
       theme: ThemeData(
         scaffoldBackgroundColor: const Color.fromARGB(255, 46, 46, 46),
       ),
-      home: const NodeView(),
+      home: const Scaffold(body: NodeView()),
     );
   }
 }

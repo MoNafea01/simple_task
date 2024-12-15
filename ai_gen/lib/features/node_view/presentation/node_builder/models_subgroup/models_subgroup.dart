@@ -265,11 +265,11 @@ class ModelsSubGroup extends VSSubgroup {
                     type: "Output",
                     outputFunction: (data) => createModel(
                       AIModel(
-                        modelName: "LinearRegression",
+                        modelName: "ridge",
                         modelType: "linear_models",
                         task: "regression",
                         params: {"alpha": double.parse(ridgeController.text)},
-                      ).toJson(),
+                      ).createModelToJson(),
                     ),
                   ),
                 ],
@@ -290,7 +290,7 @@ class ModelsSubGroup extends VSSubgroup {
                     type: "Output",
                     outputFunction: (data) => createModel(
                       {
-                        "model_name": "LinearRegression",
+                        "model_name": "lasso",
                         "model_type": "linear_models",
                         "task": "regression",
                         "params": {"alpha": double.parse(lassoController.text)},
@@ -315,7 +315,7 @@ class ModelsSubGroup extends VSSubgroup {
                     type: "Output",
                     outputFunction: (data) => createModel(
                       {
-                        "model_name": "linear_regression",
+                        "model_name": "sgd_regression",
                         "model_type": "linear_models",
                         "task": "regression",
                         "params": {"penalty": sgdRegressioncontroller.text},

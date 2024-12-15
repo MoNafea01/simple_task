@@ -338,11 +338,11 @@ class _InteractiveVSNodeViewState extends State<InteractiveVSNodeView> {
 //     );
     return Stack(
       children: [
-        Container(
-          color: Colors.grey[900], // Light grey background
-          width: width,
-          height: height,
-        ),
+        // Container(
+        //   color: Colors.grey[900], // Light grey background
+        //   width: width,
+        //   height: height,
+        // ),
         // Draw the grid first, so it is behind the interactive viewer
         if (showGrid)
           CustomPaint(

@@ -1,5 +1,3 @@
-import 'package:ai_gen/helper/helper.dart';
-import 'package:ai_gen/node_package/data/standard_interfaces/vs_list_interface.dart';
 import 'package:ai_gen/node_package/vs_node_view.dart';
 import 'package:flutter/material.dart';
 
@@ -11,85 +9,85 @@ class NodeBuilder {
     // numbersSubGroup(),
     ModelsSubGroup(),
     FunctionsSubgroup(),
-
-    (Offset offset, VSOutputData? ref) {
-      final TextEditingController controller = TextEditingController();
-      final TextField input = TextField(
-        controller: controller,
-        decoration: const InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-        ),
-      );
-
-      return VSWidgetNode(
-        type: "ListInput",
-        widgetOffset: offset,
-        outputData: [
-          VSListOutputData(
-            type: "Output",
-            outputFunction: (data) => Helper.parseList(controller.text),
-          ),
-        ],
-        child: Expanded(child: input),
-        setValue: (value) => controller.text = value,
-        getValue: () => controller.text,
-      );
-    },
-
-    (Offset offset, VSOutputData? ref) {
-      final controller = TextEditingController();
-      final input = TextField(
-        controller: controller,
-        decoration: const InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-        ),
-      );
-
-      return VSWidgetNode(
-        type: "Double input",
-        widgetOffset: offset,
-        outputData: [
-          VSDoubleOutputData(
-            type: "Output",
-            outputFunction: (data) => double.parse(controller.text),
-          ),
-        ],
-        child: Expanded(child: input),
-        setValue: (value) => controller.text = value,
-        getValue: () => controller.text,
-      );
-    },
-    (Offset offset, VSOutputData? ref) {
-      final controller = TextEditingController();
-      final input = TextField(
-        controller: controller,
-        decoration: const InputDecoration(
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-        ),
-      );
-
-      return VSWidgetNode(
-        type: "int input",
-        widgetOffset: offset,
-        outputData: [
-          VSIntOutputData(
-            type: "Output",
-            outputFunction: (data) => int.parse(controller.text),
-          ),
-        ],
-        child: Expanded(child: input),
-        setValue: (value) => controller.text = value,
-        getValue: () => controller.text,
-      );
-    },
     (Offset offset, VSOutputData? ref) => VSOutputNode(
           type: "Output",
           widgetOffset: offset,
           ref: ref,
         ),
+    //
+    // (Offset offset, VSOutputData? ref) {
+    //   final TextEditingController controller = TextEditingController();
+    //   final TextField input = TextField(
+    //     controller: controller,
+    //     decoration: const InputDecoration(
+    //       isDense: true,
+    //       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    //     ),
+    //   );
+    //
+    //   return VSWidgetNode(
+    //     type: "ListInput",
+    //     widgetOffset: offset,
+    //     outputData: [
+    //       VSListOutputData(
+    //         type: "Output",
+    //         outputFunction: (data) => Helper.parseList(controller.text),
+    //       ),
+    //     ],
+    //     child: Expanded(child: input),
+    //     setValue: (value) => controller.text = value,
+    //     getValue: () => controller.text,
+    //   );
+    // },
+    //
+    // (Offset offset, VSOutputData? ref) {
+    //   final controller = TextEditingController();
+    //   final input = TextField(
+    //     controller: controller,
+    //     decoration: const InputDecoration(
+    //       isDense: true,
+    //       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    //     ),
+    //   );
+    //
+    //   return VSWidgetNode(
+    //     type: "Double input",
+    //     widgetOffset: offset,
+    //     outputData: [
+    //       VSDoubleOutputData(
+    //         type: "Output",
+    //         outputFunction: (data) => double.parse(controller.text),
+    //       ),
+    //     ],
+    //     child: Expanded(child: input),
+    //     setValue: (value) => controller.text = value,
+    //     getValue: () => controller.text,
+    //   );
+    // },
+    // (Offset offset, VSOutputData? ref) {
+    //   final controller = TextEditingController();
+    //   final input = TextField(
+    //     controller: controller,
+    //     decoration: const InputDecoration(
+    //       isDense: true,
+    //       contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    //     ),
+    //   );
+    //
+    //   return VSWidgetNode(
+    //     type: "int input",
+    //     widgetOffset: offset,
+    //     outputData: [
+    //       VSIntOutputData(
+    //         type: "Output",
+    //         outputFunction: (data) => int.parse(controller.text),
+    //       ),
+    //     ],
+    //     child: Expanded(child: input),
+    //     setValue: (value) => controller.text = value,
+    //     getValue: () => controller.text,
+    //   );
+    // },
     // (Offset offset, VSOutputData<dynamic>? ref) {
     //   Future<Map<String, List<double>>>? splitDataFuture;
     //   TextEditingController controller = TextEditingController();

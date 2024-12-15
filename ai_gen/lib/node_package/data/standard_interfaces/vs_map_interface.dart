@@ -1,14 +1,13 @@
 import 'dart:async';
 
-import 'package:ai_gen/core/classes/model_class.dart';
 import 'package:ai_gen/node_package/data/vs_interface.dart';
 import 'package:flutter/material.dart';
 
-const Color _interfaceColor = Colors.blue;
+const Color _interfaceColor = Colors.purple;
 
-class VSModelInputData extends VSInputData {
+class VSMapInputData extends VSInputData {
   ///Basic List input interface
-  VSModelInputData({
+  VSMapInputData({
     required super.type,
     super.title,
     super.toolTip,
@@ -17,17 +16,18 @@ class VSModelInputData extends VSInputData {
   });
 
   @override
-  List<Type> get acceptedTypes => [VSModelOutputData];
+  List<Type> get acceptedTypes => [VSMapOutputData];
 
   @override
   Color get interfaceColor => _interfaceColor;
 }
 
-class VSModelOutputData extends VSOutputData<AIModel> {
+class VSMapOutputData extends VSOutputData<Map> {
   ///Basic List output interface
-  VSModelOutputData({
+  VSMapOutputData({
     required super.type,
-    FutureOr<AIModel> Function(Map<String, dynamic>)? super.outputFunction,
+    FutureOr<Map<String, dynamic>> Function(Map<String, dynamic>)?
+        super.outputFunction,
   });
 
   @override
