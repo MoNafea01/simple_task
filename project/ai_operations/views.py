@@ -21,7 +21,7 @@ from core.nodes.preprocessing.fit import Fit as FitPreprocessor
 from core.nodes.metrics import Evaluator
 from .serializers import WorkflowSerializer, ModelSerializer, FitModelSerializer, PredictSerializer, PreprocessorSerializer
 from .serializers import FitPreprocessorSerializer, TransformSerializer, FitTransformSerializer, TrainTestSplitSerializer
-from .serializers import SplitterSerializer
+from .serializers import SplitterSerializer, DataLoaderSerializer
 
 
 class WorkflowViewSet(viewsets.ModelViewSet):
@@ -74,10 +74,10 @@ class CreateModelView(APIView):
             data = serializer.validated_data
             # Create Model instance using the data
             model_instance = Model(
-                model_name=data['model_name'],
-                model_type=data['model_type'],
-                task=data['task'],
-                params=data['params']
+                model_name=data.get('model_name'),
+                model_type=data.get('model_type'),
+                task=data.get('task'),
+                params=data.get('params')
             )
             output_channel = request.query_params.get('output', None)
             response_data = model_instance(output_channel)
@@ -135,7 +135,7 @@ class PreprocessorAPIView(APIView):
         if serializer.is_valid():
             preprocessor_name = serializer.validated_data['preprocessor_name']
             preprocessor_type = serializer.validated_data['preprocessor_type']
-            params = serializer.validated_data.get('params', {})
+            params = serializer.validated_data.get('params')
 
             try:
                 # Create the Preprocessor
@@ -236,20 +236,27 @@ class TrainTestSplitAPIView(APIView):
             try:
                 # Extract validated data
                 data = serializer.validated_data.get('data')
-                params = {
-                    'test_size': serializer.validated_data.get('test_size'),
-                    'train_size': serializer.validated_data.get('train_size'),
-                    'random_state': serializer.validated_data.get('random_state'),
-                }
-                # Filter out None values in params
-                params = {k: v for k, v in params.items() if v is not None}
+                params = data.get('params')
 
                 # Instantiate TrainTestSplit and perform the split
-                splitter = TrainTestSplit(data=data, **params)
+                splitter = TrainTestSplit(data=data,params=params)
                 output_channel = request.query_params.get('output', None)
                 response_data = splitter(output_channel)
 
                 return Response(response_data, status=status.HTTP_200_OK)
             except ValueError as e:
                 return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DataLoaderAPIView(APIView):
+    def post(self, request):
+        serializer = DataLoaderSerializer(data=request.data)
+        if serializer.is_valid():
+            data_type = serializer.validated_data.get('data_type')
+            filepath = serializer.validated_data.get('filepath')
+            loader = DataLoader(data_type=data_type, filepath=filepath)
+            output_channel = request.query_params.get('output', None)
+            response_data = loader(output_channel)
+            
+            return Response(response_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
