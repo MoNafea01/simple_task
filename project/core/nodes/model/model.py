@@ -5,16 +5,17 @@ from .utils import save_node
 
 
 class Model:
-    def __init__(self, model_name, model_type, task, params):
+    def __init__(self, model_name, model_type, task, params=None):
         self.model_name = model_name
         self.model_type = model_type
         self.task = task
-        self.params = params
+        self.params = params if params else models.get(model_type).get(task).get(model_name).get('params')
         self.payload = self.create_model()
 
     def create_model(self):
         if self.model_type not in models:
-            raise ValueError(f"Unsupported model type: {self.model_type}")
+            raise ValueError(f"""Unsupported model type: {self.model_type}
+                             available types are: {list(models.keys())}""")
         
         if self.task not in models[self.model_type]:
             raise ValueError(f"Unsupported task type: {self.task}")
@@ -46,5 +47,5 @@ class Model:
 
 
 if __name__ == '__main__':
-    model = Model('linear_regression', 'linear_models', 'regression', {})
+    model = Model('ridge', 'linear_models', 'regression')
     print(model)

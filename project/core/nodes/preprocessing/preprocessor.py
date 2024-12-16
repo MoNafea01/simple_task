@@ -3,10 +3,10 @@ from .utils import save_node
 
 
 class Preprocessor:
-    def __init__(self, preprocessor_name, preprocessor_type, params):
+    def __init__(self, preprocessor_name, preprocessor_type, params=None):
         self.preprocessor_name = preprocessor_name
         self.preprocessor_type = preprocessor_type
-        self.params = params
+        self.params = params if params else preprocessors.get(preprocessor_type).get(preprocessor_name).get('params')
         self.payload = self.create_preprocessor()
 
 

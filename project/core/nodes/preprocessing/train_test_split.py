@@ -1,9 +1,9 @@
 from sklearn.model_selection import train_test_split
 
 class TrainTestSplit:
-    def __init__(self, data, **params):
+    def __init__(self, data, params=None):
         self.data = data.get('data') if isinstance(data, dict) else data
-        self.params = params
+        self.params = params if params else {'test_size': 0.2, 'random_state': 42}
         self.payload = self.split()
         self.out1 = self.payload['data'][0]
         self.out2 = self.payload['data'][1]
@@ -39,8 +39,8 @@ if __name__ == "__main__":
     import numpy as np
     data = [[1,2,3,4,5], [6,7,8,9,10]]
     y = np.array([0, 1, 0, 1, 0])
-    data = {
-        "data":[[0, 1, 0, 1, 0]]
-    }
-    splitter = TrainTestSplit(data, test_size=0.2, random_state=42)
+    # data = {
+    #     "data":[[0, 1, 0, 1, 0]]
+    # }
+    splitter = TrainTestSplit(data)
     print(splitter('1'))
